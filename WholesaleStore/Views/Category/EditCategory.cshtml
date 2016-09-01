@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewBag.Title = "EditCategory";
+}
+
+@model WholesaleStore.Models.CategoryModel
+
+<html>
+<style>
+    #NewCategoryFieldSet {
+        width: 18%;
+        height: 60%;
+        position: center;
+        text-align: left;
+        margin: auto;
+    }
+
+    .btn{
+        width: 170px;
+        background-color: #6495ED;
+        border: none;
+        color: white;
+        padding: 4px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 2px 2px;
+        cursor: pointer;
+    }
+
+    div.relative {
+        position: relative;
+        left: 45px;
+    }
+    .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                padding-top: 100px; /* Location of the box */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+                position: relative;
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                width: 33%;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 0.4s;
+                animation-name: animatetop;
+                animation-duration: 0.4s
+            }
+
+            /* The Close Button */
+            .close {
+                color: white;
+                float: right;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .modal-header {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+
+            .modal-body {padding: 2px 16px;}
+
+            .modal-footer {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+</style>
+</html>
+
+<form action="@Url.Action("SaveEditedCategory")" method="post" target="_self" id="FormEditCategory">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="NewCategoryFieldSet">
+        <fieldset>
+            <legend>Category edit form</legend>
+            <input type="hidden" name="categoryId"  value="@Model.CategoryObject.Id" /><br />
+            <b>Name:</b>
+            <input type="text" name="Name" size="20" id="editName" value="@Model.CategoryObject.Name" /><br />
+            <br />
+        </fieldset>
+    </div>
+</form>
+
+
+ <!-- Modal content -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">Close</span>
+            <h3>Info</h3>
+        </div>
+        <div class="modal-body">
+            <br />
+            <h2>The Category is edited and saved!</h2>
+            <br />
+        </div>
+        <div class="modal-footer">
+            <h2></h2>
+            <h2></h2>
+            <br />
+        </div>
+    </div>
+</div> @*Modal window - Category is saved!*@
+
+<div id="NewCategoryFieldSet">
+    <fieldset>
+        <legend>Options</legend>
+        <div class="relative">
+            <button id="btnSave" class="btn">Save changes</button>
+            <br />
+            <br />
+            <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+                <input type="submit" value="Home" class="btn" />
+            </form>
+            <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+                <input type="submit" value="Log out" class="btn" />
+            </form>
+        </div>
+    </fieldset>
+</div>
+
+<script>
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("btnSave");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            if ($("#editName").val()) {
+                modal.style.display = "block";
+                setTimeout(function () { $("#FormEditCategory").submit(); }, 1000);
+            }
+            else
+            {
+                $("#FormEditCategory").submit();
+            }
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+</script>
+
+
+
+
+

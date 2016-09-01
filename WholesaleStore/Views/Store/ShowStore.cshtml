@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "ShowStore";
+}
+
+@model WholesaleStore.Models.ProductModel
+
+<form>
+    <style>
+        td {
+                border: 1px #DDD solid;
+                padding: 1px;
+                cursor: pointer;
+            }
+
+            .selected {
+                background-color: #6495ED;
+                color: #FFF;
+            }
+
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+             .css-serial {
+            counter-reset: serial-number;
+             }
+
+            .css-serial td:first-child:before {
+                counter-increment: serial-number;
+                content: counter(serial-number);
+            }
+            .btnExit {
+                width: 130px;
+                background-color: #6495ED;
+                border: none;
+                color: white;
+                padding: 3px 10px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 2px 2px;
+                cursor: pointer;
+        }
+
+    </style>   
+    <br />    
+    <fieldset>
+        <legend>Product store</legend>
+        <table style="width:40%" class="css-serial" id="tableProducts">
+            <tr>
+                <th> # </th>
+                <th>Barcode</th>
+                <th>Category</th>
+                <th>Product Name</th>
+                <th>Amount</th>
+                <th>Unit</th>
+                <th>Price, grn</th>
+                <th>Sum, grn</th>
+            </tr>
+            @foreach (var product in Model.Products)
+            {
+                var sum = (decimal)product.Amount * product.Price;
+                <tr>
+                    <td align="center"></td>
+                    <td align="center">@product.BarCode</td>
+                    <td align="center">@product.Category.Name</td>
+                    <td>@product.Name</td>
+                    <td align="center">@product.Amount</td>
+                    <td align="center">@product.Unit.Name</td>
+                    <td align="center">@product.Price</td>
+                    <td align="center">@sum</td>
+                </tr>
+            }
+
+            <tr>
+                <th colspan="7" align="right" font-weight normal>Total sum:&nbsp;</th>
+                <th>@Model.TotalStoreSum</th>
+            </tr>
+        </table>
+        <br />
+        <b> Item quantity: @Model.Products.Count </b>
+    </fieldset>
+    <a href="@Url.Action("Index", "Home")" class="btnExit">Home</a>
+    <br />
+    <a href="@Url.Action("LoginPage", "Login")" class="btnExit">Log out</a> 
+</form>
+
+<script>
+    function highlight(e) {
+        if (selected[0]) selected[0].className = '';
+        e.target.parentNode.className = 'selected';
+    }
+
+    var table = document.getElementById('tableProducts'),
+    selected = table.getElementsByClassName('selected');
+    table.onclick = highlight;
+</script>
+

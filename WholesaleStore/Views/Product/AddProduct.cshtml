@@ -1,0 +1,336 @@
+﻿@{
+    ViewBag.Title = "AddProduct";
+}
+@model WholesaleStore.Models.ProductModel
+
+<style>
+    #NewProductFieldSet {
+        width: 32%;
+        height: 60%;
+        position: center;
+        text-align: left;
+        margin: auto;
+    }
+
+    .btn {
+        width: 170px;
+        background-color: #6495ED;
+        border: none;
+        color: white;
+        padding: 4px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 2px 2px;
+        cursor: pointer;
+    }
+
+    div.relative {
+        position: relative;
+        left: 67px;
+    }
+
+     .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                padding-top: 100px; /* Location of the box */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+                position: relative;
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                width: 33%;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 0.4s;
+                animation-name: animatetop;
+                animation-duration: 0.4s
+            }
+
+            /* The Close Button */
+            .close {
+                color: white;
+                float: right;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .modal-header {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+
+            .modal-body {padding: 2px 16px;}
+
+            .modal-footer {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+</style>
+
+<form action="@Url.Action("SaveProduct")" method="post" target="_self" id="FormNewProduct">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="NewProductFieldSet">
+        <fieldset>
+            <legend>New product form</legend>
+            <br />
+            <img src="~/Content/Images/NewItem.jpg" alt="Sample Photo" style="width:80px;height:40px;" />
+            <br />
+            <div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Name:</b>
+                @if (String.IsNullOrEmpty(Model.ProductObject.Name))
+                {
+                    <input type="text" name="Name" size="45" id="newName" />
+                }
+                else
+                {
+                    <input type="text" name="Name" size="45" id="newName" value="@Model.ProductObject.Name.ToString()" />
+                }
+                @if (ViewData["ErrorMessageEmptyName"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyName"]</b>
+                }
+                <br />
+                <br />
+            </div>@*//Name*@
+
+
+            <div>
+                &nbsp;<b>  Barcode: </b>
+                @if (String.IsNullOrEmpty(Model.ProductObject.BarCode))
+                {
+                    <input type="text" name="Barcode" id="newBarCode" />
+                }
+                else
+                {
+                    <input type="text" name="Barcode" id="newBarCode" value="@Model.ProductObject.BarCode.ToString()" />
+                }
+                @if (ViewData["ErrorMessageEmptyBarCode"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyBarCode"]</b>
+                }
+
+                @if (ViewData["ErrorMessageWrongBarCode"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageWrongBarCode"]</b>
+                }
+                <br />
+                <br />
+
+            </div>@*//BarCode*@
+
+
+            <div>
+                &nbsp;<b> Amount: </b>
+                                @if (@Model.ProductObject.Amount == null)
+                                {
+                                    <input type="text" name="Amount" id="newAmount" /><br />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Amount" id="newAmount" value="@Model.ProductObject.Amount.ToString()" />
+                                }
+                @if (ViewData["ErrorMessageEmptyAmount"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyAmount"]</b>
+                }
+
+                @if (ViewData["ErrorMessageWrongAmount"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageWrongAmount"]</b>
+                }
+            </div>@*//Amount*@
+
+            <div>
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Unit:</b>
+                <select size="1" name="Unit" style="width: 172px">
+                    @if (Model.CurrentUnitId == null || Model.CurrentUnitId == 0)
+                    {
+                        <option value="" style="display:none; color:grey;">Choose unit</option>
+                    }
+                    @foreach (var unit in Model.Units)
+                    {
+                        if (@unit.Id == @Model.CurrentUnitId)
+                        {
+                            <option value="@unit.Id" selected="selected">@unit.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@unit.Id">@unit.Name</option>
+                        }
+                    }
+                </select>
+                @if (ViewData["ErrorMessageEmptyUnit"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyUnit"]</b>
+                }
+                <br />
+                <br />
+            </div>@*//Unit*@
+
+
+            <div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Price:</b>
+                @if (@Model.ProductObject.Price == null || @Model.ProductObject.Price == 0)
+                {
+                    <input type="text" name="Price" id="newPrice" />
+                }
+                else
+                {
+                    <input type="text" name="Price" id="newPrice" value="@Model.ProductObject.Price.ToString()" />
+                }
+
+                <b style="color:red">@ViewData["ErrorMessageEmptyPrice"]</b>
+
+                @if (ViewData["ErrorMessageWrongPrice"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageWrongPrice"]</b>
+                }
+            </div>@*//Price*@
+
+
+            <div>
+                <br />
+                <b>Category:</b>
+                <select size="1" name="category" style="width: 175px">
+                    @if (Model.CurrentCategoryId == null || Model.CurrentCategoryId == 0)
+                    {
+                        <option value="" style="display:none; color:grey;">Choose category</option>
+                    }
+                    @foreach (var ct in Model.Categories)
+                    {
+                        if (@ct.Id == @Model.CurrentCategoryId)
+                        {
+                            <option value="@ct.Id" selected="selected">@ct.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@ct.Id">@ct.Name</option>
+                        }
+                    }
+                </select>
+                @if (ViewData["ErrorMessageEmptyCategory"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyCategory"]</b>
+                }
+                <br />
+                <br />
+            </div> @*Category*@
+        </fieldset>
+    </div>
+</form>
+
+<!-- Modal content -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">Close</span>
+            <h3>Info</h3>
+        </div>
+        <div class="modal-body">
+            <br />
+            <h2>The Product is saved!</h2>
+            <br />
+        </div>
+        <div class="modal-footer">
+            <h2></h2>
+            <h2></h2>
+            <br />
+        </div>
+    </div>
+</div> @*Modal window - Product is saved!*@
+
+<div id="NewProductFieldSet">
+    <fieldset>
+        <legend>Options:</legend>
+        <div class="relative">
+                <button id="btnSave" class="btn">Save</button>
+                <br />
+                <br />
+
+                <form action="@Url.Action("AddCategory", "Category")" method="post" target="_self">
+                    <button type="submit" class="btn">Add category</button>
+                </form>
+                <form action="@Url.Action("AddUnit", "Unit")" method="post" target="_self">
+                    <button type="submit" class="btn">Add unit</button>
+                </form>
+                <br />
+                <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+                    <input type="submit" value="Home" class="btn" />
+                </form>
+
+                <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+                    <input type="submit" value="Log out" class="btn" />
+                </form>
+            </div>
+    </fieldset>
+</div> @*Options*@
+
+<script>
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("btnSave");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            var barCodeCheck = /^([0-9]{13})$/;
+
+            if ($("#newName").val() && $("#newBarCode").val() && $("#newAmount").val() && $("#newPrice").val() && barCodeCheck.test($("#newBarCode").val())) {
+                modal.style.display = "block";
+                setTimeout(function () { debugger; $("#FormNewProduct").submit(); }, 1000);
+            }
+            else
+            {
+                debugger; $("#FormNewProduct").submit();
+            }
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+</script>
+
+
+

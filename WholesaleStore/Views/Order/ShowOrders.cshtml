@@ -1,0 +1,127 @@
+﻿@{
+    ViewBag.Title = "ShowOrders";
+}
+
+@model WholesaleStore.Models.OrderModel
+
+<style>
+    .css-serial {
+            counter-reset: serial-number;
+             }
+
+         .css-serial td:first-child:before {
+                counter-increment: serial-number;
+                content: counter(serial-number);
+            }
+
+    td {
+        border: 1px #DDD solid;
+        padding: 2px;
+        cursor: pointer;
+    }
+
+    .selected {
+        background-color: #6495ED;
+        color: #FFF;
+    }
+
+    .button1 {
+            width: 200px;
+            background-color: #6495ED; 
+            border: none;
+            color: white;
+            padding: 4px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }
+        
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+</style>
+
+<form>
+    <fieldset>
+        <img src="~/Content/Images/Orders.jpg" alt="Sample Photo" style="width:350px;height:70px;" />
+        <table id="tableOrders" style="width:40%" class="css-serial">
+            <tr>
+                <th>#</th>
+                <th>Number</th>
+                <th>Customer Name</th>
+                <th>Total sum, grn</th>
+                <th>Date/Time</th>
+            </tr>
+            @foreach (var order in Model.Orders)
+            {
+                <tr data-orderid="@order.Id">
+                    <td align="center"></td>
+                    <td align="center">@order.OrderNumber</td>
+                    <td>@order.Customer.Name</td>
+                    <td align="center">@order.TotalSum</td>
+                    <td align="center">@order.Date</td>
+                </tr>
+            }
+        </table>
+   </fieldset>
+</form>
+
+<fieldset>
+    <legend>Options</legend>
+    <form action="@Url.Action("CheckShowOrders", "Order")" method="get" target="_self">
+        <input type="hidden" name="orderId" id="hiddenOrderId" />        
+        <input type="hidden" name="userId" value="@ViewBag.userId" />
+        <button type="submit" id="btnShowOrderItems" onclick="" class="button button1">Show order</button>
+        @if (ViewData["ErrorMessageEmptyShowOrder"] != null)
+        {
+            <b style="color:red">@ViewData["ErrorMessageEmptyShowOrder"]</b>
+        }
+    </form>@*Show order Button*@
+
+    <form action="@Url.Action("AddOrder", "Order")" method="post" target="_self">
+        <button type="submit" class="button button1">New order</button>
+        <input type="hidden" name="userId" value="@ViewBag.userId" />
+    </form>@*Add Button*@
+
+    <form action="@Url.Action("DeleteOrder", "Order")" method="get" target="_self">
+        <input type="hidden" name="orderId" id="hiddenDeletedOrderId" />
+        <input type="hidden" name="userId" value="@ViewBag.userId" />
+        <button type="submit" onclick="" class="button button1">Delete order</button>
+        @if (ViewData["ErrorMessageEmptyOrder"] != null)
+        {
+            <b style="color:red">@ViewData["ErrorMessageEmptyOrder"]</b>
+        }
+    </form>@*Delete Button*@
+
+    <br />
+    <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+        <input type="submit" value="Home" class="button1" />
+    </form>
+
+    <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+        <input type="submit" value="Log out" class="button1" />
+    </form>
+</fieldset>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        function highlight(e) {
+            if (selected[0]) selected[0].className = '';
+            e.target.parentNode.className = 'selected';
+
+            var orderId = $("tr.selected").attr("data-orderid");
+
+            $("#hiddenOrderId").val(orderId);
+            $("#hiddenDeletedOrderId").val(orderId);            
+        }
+
+        var table = document.getElementById('tableOrders'),
+            selected = table.getElementsByClassName('selected');
+        table.onclick = highlight;
+    </script>
+
+
+

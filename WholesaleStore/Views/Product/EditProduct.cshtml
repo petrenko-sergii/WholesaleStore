@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "EditProduct";
+}
+
+@model WholesaleStore.Models.ProductModel
+
+<html>
+<style>
+    #NewProductFieldSet {
+        width: 32%;
+        height: 60%;
+        position: center;
+        text-align: left;
+        margin: auto;
+    }
+
+    .btn {
+        width: 170px;
+        background-color: #6495ED;
+        border: none;
+        color: white;
+        padding: 4px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 2px 2px;
+        cursor: pointer;
+    }
+
+    div.relative {
+        position: relative;
+        left: 67px;
+    }
+</style>
+</html>
+
+<form action="@Url.Action("SaveEditedProduct")" method="post" target="_self">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="NewProductFieldSet">
+        <fieldset>
+            <legend>Product edit form</legend>
+            <input type="hidden" name="productId" value="@Model.ProductObject.Id" /><br />
+            <b>  Name: </b>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="text" name="Name" size="45" value="@Model.ProductObject.Name" /><br />
+            <br />
+            <b>  Barcode: </b>&nbsp;
+            <input type="text" name="Barcode" value="@Model.ProductObject.BarCode" /><br />
+            <br />
+            <b> Amount: </b> &nbsp;
+            <input type="text" name="Amount" value="@Model.ProductObject.Amount" /><br />
+            <br />
+            <b>  Unit: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <select size="1" name="Unit">
+                <option disabled>Choose unit</option>
+                @foreach (var unit in Model.Units)
+                {
+                    if (@unit.Id == @Model.ProductObject.Unit.Id)
+                    {
+                        <option value="@unit.Id" selected="selected">@unit.Name </option>
+                    }
+                    else
+                    {
+                        <option value="@unit.Id">@unit.Name </option>
+                    }
+                }
+            </select>
+            <br />
+            <br />
+            <b>  Price: </b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="text" name="Price" value="@Model.ProductObject.Price" /><br />
+            <br />
+            <b>  Category: </b>
+            <select size="1" name="Category">
+                <option disabled>Choose category</option>
+                @foreach (var ct in Model.Categories)
+                {
+                    if (@ct.Id == @Model.ProductObject.Category.Id)
+                    {
+                        <option value="@ct.Id" selected="selected">@ct.Name </option>
+                    }
+                    else
+                    {                        
+                        <option value="@ct.Id">@ct.Name </option>
+                    }
+                }
+
+            </select>
+            <br />
+            <br />
+            <div class="relative">
+                <input type="submit" value="Save changes" class="btn">
+            </div>
+        </fieldset>
+    </div>
+</form>
+
+<div id="NewProductFieldSet">
+    <fieldset>
+        <div class="relative">
+            <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+                <input type="submit" value="Home" class="btn" />
+            </form>
+            <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+                <input type="submit" value="Log out" class="btn" />
+            </form>
+        </div>
+    </fieldset>
+</div>
+
+
+

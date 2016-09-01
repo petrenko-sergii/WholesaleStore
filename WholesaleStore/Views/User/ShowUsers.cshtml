@@ -1,0 +1,86 @@
+﻿<html>
+    <style>
+         td {
+                border: 1px #DDD solid;
+                padding: 1px;
+                cursor: pointer;
+            }
+
+            .selected {
+                background-color: #6495ED;
+                color: #FFF;
+            }
+
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+             .css-serial {
+            counter-reset: serial-number;
+             }
+
+            .css-serial td:first-child:before {
+                counter-increment: serial-number;
+                content: counter(serial-number);
+            }     
+            .btn {
+            width: 230px;
+            background-color: #6495ED;
+            border: none;
+            color: white;
+            padding: 3px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }         
+    </style>
+</html>
+
+@{
+    ViewBag.Title = "ShowUsers";
+}
+@model WholesaleStore.Models.UsersModel
+
+<form action="@Url.Action("ShowProducts")" method="post" target="_self">
+    <fieldset>
+        <legend>Users:</legend>
+        <img src="~/Content/Images/Users.jpg" alt="Sample Photo" style="width:115px;height:100px;" />
+        <table style="width:30%" class="css-serial" id="tableUsers">
+            <tr>
+                <th>Id</th>
+                <th>User name</th>
+                <th>UserType</th>
+            </tr>
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td align="center"></td>
+                    <td>@user.Name</td>
+                    <td align="center">@user.Usertype.Name</td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+</form>
+<form action="@Url.Action("Index", "Home")" method="post" target="_self">
+    <input type="submit" value="Home" class="btn" />
+</form>
+
+<form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+    <input type="submit" value="Log out" class="btn" />
+</form>
+
+<script>
+    function highlight(e) {
+        if (selected[0]) selected[0].className = '';
+        e.target.parentNode.className = 'selected';
+    }
+
+    var table = document.getElementById('tableUsers'),
+    selected = table.getElementsByClassName('selected');
+    table.onclick = highlight;
+</script>
+

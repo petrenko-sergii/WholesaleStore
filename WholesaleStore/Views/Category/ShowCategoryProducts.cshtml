@@ -1,0 +1,145 @@
+﻿@{
+    ViewBag.Title = "ShowCategoryProducts";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        td {
+            border: 1px #DDD solid;
+            padding: 1px;
+            cursor: pointer;
+        }
+        .css-serial {
+                counter-reset: serial-number;
+            }
+        .css-serial td:first-child:before {
+                counter-increment: serial-number;
+                content: counter(serial-number);
+        }
+
+        .selected {
+            background-color: #6495ED;
+            color: #FFF;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .btn {
+            width: 200px;
+            background-color: #6495ED;
+            border: none;
+            color: white;
+            padding: 3px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }     
+         div.relative {
+        position: relative;
+        left: 67px;
+    }
+        
+         #FieldSet {
+        width: 50%;
+        height: 60%;
+        position: center;
+        text-align: left;
+        margin: auto;
+    }  
+
+    }  
+    </style>
+</head>
+
+@model WholesaleStore.Models.ProductModel
+
+<form>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="FieldSet">
+        <fieldset>
+            <legend>Products:</legend>
+
+            <p1><b>Category Name:</b></p1>
+            <p2 style="color:red"><b> @Model.CurrentCategoryName</b></p2>
+            <br />
+            @if (@Model.Products.Count == 0)
+            {
+                <p style="color: red"><strong>No Products for this category</strong></p>
+            }
+            else
+            {
+                <br />
+                <table style="width:100%" id="tableProducts" class="css-serial">
+                    <tr>
+                        <th>#</th>
+                        <th>Barcode</th>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Unit</th>
+                        <th>Price, grn</th>
+                    </tr>
+                    @foreach (var pr in Model.Products)
+                    {
+                    <tr>
+                        <td align="center"></td>
+                        <td align="center">@pr.BarCode</td>
+                        <td>@pr.Name</td>
+                        <td align="center">@pr.Amount</td>
+                        <td align="center">@pr.Unit.Name</td>
+                        <td align="center">@pr.Price</td>
+                    </tr>
+                    }
+                </table>
+                <br />
+                <b> Item quantity: @Model.Products.Count </b>
+            }
+        </fieldset>
+    </div>
+</form>
+
+<div id="FieldSet">
+    <fieldset>
+        <legend>Options</legend>
+        <form action="@Url.Action("ShowCategories", "Category")" method="post" target="_self">
+            <input type="submit" value="Show all categories" class="btn" />
+        </form>
+        <br />
+        <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+            <input type="submit" value="Home" class="btn" />
+        </form>
+        <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+            <input type="submit" value="Log out" class="btn" />
+        </form>
+    </fieldset>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    function highlight(e) {
+        if (selected[0]) selected[0].className = '';
+        e.target.parentNode.className = 'selected';      
+    }
+
+    var table = document.getElementById('tableProducts'),
+    selected = table.getElementsByClassName('selected');
+    table.onclick = highlight;   
+</script>
+
+
+
+
+

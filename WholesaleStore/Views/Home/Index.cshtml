@@ -1,0 +1,108 @@
+﻿ <style>       
+        p2{
+            color:red;
+        }
+        .button1 {
+            width: 250px;
+            background-color: #6495ED; 
+            border: none;
+            color: white;
+            padding: 4px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }
+        .button2 {
+            width: 250px;
+            background-color: #6495ED; 
+            border: none;
+            color: white;
+            padding: 4px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 20px;
+            cursor: pointer;
+        }
+    </style>
+
+    @{
+        ViewBag.Title = "Index";
+    }
+    @model WholesaleStore.Models.HomeModel
+
+    <h3>Wholesale store</h3>
+    <p1><b>Logged as:</b></p1>
+   
+    @if(@Model.LogUser.Usertype.Name == "Admin")
+    {
+        <p2><b> @Model.LogUser.Name</b></p2>
+    }
+    else
+    {
+        <p2><b> @Model.LogUser.Usertype.Name @Model.LogUser.Name</b></p2>
+    }    
+    <br />
+    <br />
+<form >
+    <img src="~/Content/Images/WholeSale.jpg" alt="Sample Photo" style="width:480px;height:360px;" />
+</form>
+
+<fieldset>
+        <legend>Show information</legend>
+            <form action="@Url.Action("ShowStore", "Store")" method="post" target="_self">
+                <button type="submit" class="button button1">Show store</button>
+            </form>
+            <form action="@Url.Action("ShowProducts", "Product")" method="post" target="_self">
+                <button type="submit" class="button button1" >Show products</button>
+                <input type="hidden" name="userId" value="@ViewBag.userId" /> 
+            </form>
+            <form action="@Url.Action("ShowCategories", "Category")" method="post" target="_self">
+                <button type="submit" class="button button1">Show categories</button>
+            </form>
+            <form action="@Url.Action("ShowCustomers", "Customer")" method="post" target="_self">
+                <button type="submit" class="button button1">Show customers</button>
+            </form>
+            <form action="@Url.Action("ShowOrders", "Order")" method="post" target="_self">
+                <input type="hidden" value="@Model.LogUser.Id" name="userId" />
+                <button type="submit" class="button button1">Show orders</button>
+            </form>            
+            <form action="@Url.Action("ShowUnits", "Unit")" method="post" target="_self">
+                <button type="submit" class="button button1">Show units (kg, pack)</button>
+            </form>
+            <form action="@Url.Action("ShowUsers", "User")" method="post" target="_self">
+                <button type="submit" class="button button1">Show users</button>
+            </form>                 
+    </fieldset>
+<fieldset>
+
+    <legend>Add new item</legend>
+    <form action="@Url.Action("AddProduct", "Product")" method="post" target="_self">
+        <button type="submit" class="button button1">Add product</button>
+    </form>
+    <form action="@Url.Action("AddCategory", "Category")" method="post" target="_self">
+        <button type="submit" class="button button1">Add category</button>
+    </form>
+
+    <form action="@Url.Action("AddCustomer", "Customer")" method="post" target="_self">
+        <button type="submit" class="button button1">Add customer</button>
+    </form>
+    <form action="@Url.Action("AddOrder", "Order")" method="post" target="_self">
+        <input type="hidden" value="@Model.LogUser.Id" name="userId" />
+        <button type="submit" class="button button1">Add order</button>
+    </form>
+    <form action="@Url.Action("AddUnit", "Unit")" method="post" target="_self">
+        <button type="submit" class="button button1">Add unit (kg, pack)</button>
+    </form>
+    <form action="@Url.Action("NewUser", "Login")" method="post" target="_self">
+        <button type="submit" class="button button1">Add user</button>
+    </form>
+</fieldset>
+
+<form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+    <input type="submit" value="Log out" class="button button2" />
+</form>

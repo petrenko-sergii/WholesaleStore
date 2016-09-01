@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "ShowCustomerOrders";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        td {
+            border: 1px #DDD solid;
+            padding: 1px;
+            cursor: pointer;
+        }
+
+        .css-serial {
+            counter-reset: serial-number;
+        }
+
+            .css-serial td:first-child:before {
+                counter-increment: serial-number;
+                content: counter(serial-number);
+            }
+
+        .selected {
+            background-color: #6495ED;
+            color: #FFF;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+      #FieldSet {
+        width: 40%;
+        height: 60%;
+        position: center;
+        text-align: left;
+        margin: auto;
+    }
+
+       .btn {
+            width: 200px;
+            background-color: #6495ED;
+            border: none;
+            color: white;
+            padding: 3px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }     
+    </style>
+</head>
+
+@model WholesaleStore.Models.OrderModel
+
+<form>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="FieldSet">
+        <fieldset>
+            <legend>Orders:</legend>
+            <p1><b>Customer Name:</b></p1>
+            <p2 style="color:red"><b> @Model.CurrentCustomerName</b></p2>
+            <br />
+            @if (@Model.Orders.Count == 0)
+            {
+                <p style="color: red"><strong>No Orders for this Customer</strong></p>
+            }
+            else
+            {
+                <br />
+                <table id="tableOrders" style="width:100%" class="css-serial">
+                    <tr>
+                        <th align="center">#</th>
+                        <th align="center">Order Number</th>
+                        <th align="center">Total sum, grn</th>
+                        <th align="center">Date/Time</th>
+                    </tr>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td align="center"></td>
+                            <td align="center">@order.OrderNumber</td>
+                            <td align="center">@order.TotalSum</td>
+                            <td align="center">@order.Date</td>
+                        </tr>
+                    }
+                </table>
+                <br />
+                <b> Item quantity: @Model.Orders.Count </b>
+              }
+         </fieldset>
+     </div>
+</form>
+
+<div id="FieldSet">
+    <fieldset>
+        <legend>Options</legend>
+        <form action="@Url.Action("ShowCustomers", "Customer")" method="post" target="_self">
+            <input type="submit" value="Show all Customers" class="btn" />
+        </form>
+        <br />
+        <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+            <input type="submit" value="Home" class="btn" />
+        </form>
+        <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+            <input type="submit" value="Log out" class="btn" />
+        </form>
+    </fieldset>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    function highlight(e) {
+        if (selected[0]) selected[0].className = '';
+        e.target.parentNode.className = 'selected';
+    }
+
+    var table = document.getElementById('tableOrders'),
+    selected = table.getElementsByClassName('selected');
+    table.onclick = highlight;
+</script>
+
+
+
+
+

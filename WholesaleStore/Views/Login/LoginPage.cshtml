@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "LoginPage";
+}
+@model WholesaleStore.Models.UsersModel
+
+<style>
+    #LoginFieldSet {
+        width:28%; 
+        height:60%; 
+        position:center; 
+        text-align:left;
+        margin: auto;
+        }
+    .btnLoginForm {
+            width: 170px;
+            background-color: #6495ED; 
+            border: none;
+            color: white;
+            padding: 4px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 2px;
+            cursor: pointer;            
+        }
+    div.relative {
+        position: relative;
+        left: 68px;
+    }
+</style>
+
+<form action="@Url.Action("CheckLogin")" method="post" target="_self">    
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="LoginFieldSet">
+        <fieldset id="field" onmouseover="hideing();" onmouseout="showing();">
+            <legend>Login info </legend>
+            <img src="~/Content/Images/Login.jpg" alt="Sample Photo" style="width:100px;height:100px;" />
+            <h2>Please, log in the system</h2>
+            <b>  Login: </b> &nbsp; &nbsp; &nbsp;&nbsp;
+            <select name="User" size="1" value="Admin">
+
+                @if (ViewData["ErrorMessageLog"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageLog"]</b>
+                }
+
+                @if (Model.CurrentUserId == null || Model.CurrentUserId == 0)
+                {
+                    <option value="" style="display:none; color:grey;">Choose user</option>
+                }
+                @foreach (var user in Model.Users)
+                {
+                    if (@user.Usertype.Name == "Admin")
+                    {
+                        <option value="@user.Id">@user.Usertype.Name </option>
+                    }
+                    else
+                    {
+                        if (@user.Id == @Model.CurrentUserId)
+                        {
+                            <option value="@user.Id" selected="selected">@user.Usertype.Name &nbsp; @user.Name </option>
+                        }
+                        else
+                        {
+                            <option value="@user.Id">@user.Usertype.Name &nbsp; @user.Name </option>
+                        }
+                    }
+                }
+            </select>
+
+            @if (ViewData["ErrorMessageLog"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageLog"]</b>
+            }
+
+            <br />
+            <br />
+            <b> Password: <input type="password" name="Password" size="25" value="111"/></b>
+            @if (ViewData["ErrorMessagePassword"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessagePassword"]</b>
+            }
+            <br />
+            <br />
+            <div class="relative">
+                <input type="submit" value="Submit" class="btnLoginForm">
+            </div>
+            <br />
+            <div class="relative">
+                <a href="@Url.Action("NewUser", "Login")"><strong>Register as the new user</strong></a>
+            </div>             
+        </fieldset>
+    </div>
+</form>
+
+

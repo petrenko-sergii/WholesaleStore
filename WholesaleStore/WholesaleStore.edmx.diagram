@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="111a33bf5fb74e739c14c2ef42abc9d6" Name="Diagram1">
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.CATEGORY" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.CUSTOMER" Width="1.5" PointX="0.75" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.LOGGEDUSER" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.ORDER" Width="1.5" PointX="3" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.ORDER_ITEM" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.PRODUCT" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.UNIT" Width="1.5" PointX="0.75" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.USER" Width="1.5" PointX="0.75" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WHOLESALE_STOREModel.USERTYPE" Width="1.5" PointX="1.5" PointY="15.125" IsExpanded="true" />
+        <AssociationConnector Association="WHOLESALE_STOREModel.FK_PRODUCT_CATEGORY" ManuallyRouted="false" />
+        <AssociationConnector Association="WHOLESALE_STOREModel.FK_ORDER_CUSTOMER" ManuallyRouted="false" />
+        <AssociationConnector Association="WHOLESALE_STOREModel.FK_ORDER_ITEM_ORDER" ManuallyRouted="false" />
+        <AssociationConnector Association="WHOLESALE_STOREModel.FK_ORDER_USER" ManuallyRouted="false" />
+        <AssociationConnector Association="WHOLESALE_STOREModel.FK_ORDER_ITEM_PRODUCT" ManuallyRouted="false" />
+        <AssociationConnector Association="WHOLESALE_STOREModel.FK_PRODUCT_UNIT" ManuallyRouted="false" />
+        <AssociationConnector Association="WHOLESALE_STOREModel.FK_USER_USERTYPE" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

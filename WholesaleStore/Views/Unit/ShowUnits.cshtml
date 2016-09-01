@@ -1,0 +1,234 @@
+﻿@{
+    ViewBag.Title = "ShowUnits";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        .css-serial {
+            counter-reset: serial-number;
+             }
+
+         .css-serial td:first-child:before {
+                counter-increment: serial-number;
+                content: counter(serial-number);
+            }
+        td {
+            border: 1px #DDD solid;
+            padding: 1px;
+            cursor: pointer;
+        }
+
+        .selected {
+            background-color: #6495ED;
+            color: #FFF;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .btnShowUnitsPage {
+            width: 230px;
+            background-color: #6495ED;
+            border: none;
+            color: white;
+            padding: 3px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }
+        .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                padding-top: 100px; /* Location of the box */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+                position: relative;
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                width: 33%;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 0.4s;
+                animation-name: animatetop;
+                animation-duration: 0.4s
+            }
+
+            /* The Close Button */
+            .close {
+                color: white;
+                float: right;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .modal-header {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+
+            .modal-body {padding: 2px 16px;}
+
+            .modal-footer {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+    </style>
+</head>
+
+@model WholesaleStore.Models.UnitModel
+
+    <form action="@Url.Action("DeleteUnit", "Unit")" method="post" target="_self" id="FormShowUnits">
+        <input type="hidden" name="unitId" id="hiddenDeletedUnitId" />
+        <fieldset>
+            <legend>Units:</legend>
+            <img src="~/Content/Images/Units.jpg" alt="Sample Photo" style="width:385px;height:135px;" />
+
+            <table style="width:20%" id="tableUnits" class="css-serial">
+                <tr>
+                    <th style="width: 25px">Id</th>
+                    <th style="width: 100px">Unit</th>
+                </tr>
+                @foreach (var unit in Model.Units)
+                {
+                    <tr data-unitid="@unit.Id">
+                        <td align="center"></td>
+                        <td>&nbsp;@unit.Name.First().ToString().ToUpper()@unit.Name.Substring(1)</td>
+                    </tr>
+                }
+            </table>
+            <br />
+            <b> Item quantity: @Model.Units.Count </b>
+        </fieldset>
+    </form>
+
+
+<!-- Modal content -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">Close</span>
+            <h3>Info</h3>
+        </div>
+        <div class="modal-body">
+            <br />
+            <h2 style="color:red;">The Unit is deleted!</h2>
+            <br />
+        </div>
+        <div class="modal-footer">
+            <h2></h2>
+            <h2></h2>
+            <br />
+        </div>
+    </div>
+</div> @*Modal window - Unit is deleted!*@
+
+    <fieldset>
+        <legend>Options</legend>
+        <form action="@Url.Action("AddUnit", "Unit")" method="get" target="_self">
+            <button type="submit" class="btnShowUnitsPage">Add new unit</button>
+        </form> @*Add new unit Button*@
+
+        <div>
+            <button class="btnShowUnitsPage" id="btnDelete">Delete unit</button>            
+            @if (ViewData["ErrorMessageEmptyUnit"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageEmptyUnit"]</b>
+            }
+        </div>@*Delete Button*@
+
+        <form action="@Url.Action("EditUnit", "Unit")" method="get" target="_self">
+            <input type="hidden" name="unitId" id="hiddenUnitId" />
+            <button type="submit" onclick="" class="btnShowUnitsPage">Edit unit</button>
+            @if (ViewData["ErrorMessageEmptyEditUnit"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageEmptyEditUnit"]</b>
+            }
+        </form> @*Edit Button*@
+        <br />
+        <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+            <input type="submit" value="Home" class="btnShowUnitsPage" />
+        </form>
+
+        <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+            <input type="submit" value="Log out" class="btnShowUnitsPage" />
+        </form>
+    </fieldset>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        function highlight(e) {
+            if (selected[0]) selected[0].className = '';
+            e.target.parentNode.className = 'selected';
+
+
+            var unitId = $("tr.selected").attr("data-unitid");
+
+            $("#hiddenDeletedUnitId").val(unitId);
+            $("#hiddenUnitId").val(unitId);
+        }
+
+        var table = document.getElementById('tableUnits'),
+        selected = table.getElementsByClassName('selected');
+        table.onclick = highlight;
+
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("btnDelete");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            if ($("#hiddenDeletedUnitId").val()) {
+                modal.style.display = "block";
+                setTimeout(function () { debugger; $("#FormShowUnits").submit(); }, 1000);
+            }
+            else {
+                debugger; $("#FormShowUnits").submit();
+            }
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>

@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "NewUser";
+}
+
+@model WholesaleStore.Models.UserTypeModel
+
+<style>
+    #NewUserFieldSet {
+        width: 32%;
+        height: 60%;
+        position: center;
+        text-align: left;
+        margin: auto;
+    }
+
+    .btnLoginForm {
+        width: 170px;
+        background-color: #6495ED;
+        border: none;
+        color: white;
+        padding: 4px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 2px 2px;
+        cursor: pointer;
+    }
+
+    div.relative {
+        position: relative;
+        left: 123px;
+    }
+</style>
+
+
+<form action="@Url.Action("SaveUser", "Login")" method="post" target="_self">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="NewUserFieldSet">
+        <fieldset id ="field" onmouseover="hideing();" onmouseout="showing();">
+            <legend>New user info</legend>
+            <br />
+            <img src="~/Content/Images/NewUser.jpg" alt="Sample Photo" style="width:100px;height:100px;" />
+            <h2>Please, enter new data: </h2>
+            <br />
+            <div>
+                <b>Surname/Name: </b>&nbsp;&nbsp;&nbsp;
+                @if (String.IsNullOrEmpty(Model.NewUserName))
+                {
+                    <input type="text" name="name" />
+                }
+                else
+                {
+                    <input type="text" name="name" value="@Model.NewUserName.ToString()" />
+                }
+
+                @if (ViewData["ErrorMessageLog"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageLog"]</b>
+                }
+                <br />
+                <br />
+            </div>@*Surname/name*@
+
+            <div>
+                <b>Password: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="password" name="password" />
+                @if (ViewData["ErrorMessagePassword"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessagePassword"]</b>
+                }
+                <br />
+                <br />
+            </div>@*Password*@
+
+            <div>
+                <b>Confirm password: </b>
+                <input type="password" name="confirmPassword" />
+
+                @if (ViewData["ErrorMessageEmptyConfirmPassword"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyConfirmPassword"]</b>
+                }   
+                @if (ViewData["ErrorMessageConfirmPassword"] != null && ViewData["ErrorMessageEmptyConfirmPassword"] == null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageConfirmPassword"]</b>
+                }   
+                <br />
+                <br />
+            </div>@*Confirm Password*@
+           
+            <div>
+                <b>Usertype: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <select size="1" name="userType" style="width: 172px">
+                    @if (Model.CurrentUserTypeId == null || Model.CurrentUserTypeId == 0)
+                    {
+                        <option value="" style="display:none; color:grey;">Choose usertype</option>
+                    }
+                    
+                    @foreach (var userType in Model.UserTypes)
+                    {
+                        if (@userType.Id == @Model.CurrentUserTypeId)
+                        {
+                            <option value="@userType.Id" selected="selected">@userType.Name</option>
+                        }
+                        else
+                        {
+                            if (@userType.Name != "Admin")
+                            {
+                                <option value="@userType.Id">@userType.Name</option>                                
+                            }
+                        }
+                    }
+
+                </select>
+                @if (ViewData["ErrorMessageEmptyUserType"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyUserType"]</b>
+                }
+            </div>@*UserType*@
+
+                <br />
+                <br />
+                <div class="relative">
+                    <input type="submit" value="Submit" class="btnLoginForm">
+                </div>
+                <br />
+                <div class="relative">
+                    <a href="@Url.Action("LoginPage", "Login")"><strong>Back to Login page</strong></a>
+                </div>
+</fieldset>
+    </div>
+</form>
+

@@ -1,0 +1,287 @@
+﻿    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style>
+            .css-serial {
+                counter-reset: serial-number;
+            }
+
+                .css-serial td:first-child:before {
+                    counter-increment: serial-number;
+                    content: counter(serial-number);
+                }
+
+            td {
+                border: 1px #DDD solid;
+                padding: 2px;
+                cursor: pointer;
+            }
+
+            .selected {
+                background-color: #6495ED;
+                color: #FFF;
+            }
+
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+
+            /* The Modal (background) */
+            .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                padding-top: 100px; /* Location of the box */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+                position: relative;
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                width: 80%;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 0.4s;
+                animation-name: animatetop;
+                animation-duration: 0.4s
+            }
+
+            /* The Close Button */
+            .close {
+                color: white;
+                float: right;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .modal-header {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+
+            .modal-body {padding: 2px 16px;}
+
+            .modal-footer {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+             .btn {
+                width: 200px;
+                background-color: #6495ED; 
+                border: none;
+                color: white;
+                padding: 4px 25px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 2px 2px;
+                cursor: pointer;
+            }
+             .btnModal {
+                width: 125px;
+                background-color: #6495ED; 
+                border: none;
+                color: white;
+                padding: 4px 25px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 2px 2px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    @{
+    ViewBag.Title = "ShowOrderItems";
+    }
+
+    @model WholesaleStore.Models.OrderItemModel
+
+    <form>
+        <fieldset>
+            <legend>Order information</legend>
+            <h4>Order number: @Model.Order.OrderNumber</h4>
+            <h4>Customer name: @Model.Order.Customer.Name</h4>
+            <h4>Order date/time: @Model.Order.Date</h4>
+            <b>User name: @Model.Order.User.Usertype.Name.ToLower() @Model.Order.User.Name</b>                       
+        </fieldset>
+
+        <fieldset>
+            <legend>Items in order</legend>
+            <table style="width:40%" id="tableItems" class="css-serial">
+                <tr>
+                    <th>#</th>
+                    <th>Barcode</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th>Unit</th>
+                    <th>Price, grn</th>
+                    <th>Sum, grn</th>
+                </tr>
+
+                @foreach (var item in Model.Items)
+                {
+                    var sum = (decimal)item.Amount * item.Price;
+                    <tr data-itemid="@item.Id">
+                        <td align="center"></td>
+                        <td align="center">@item.Product.BarCode</td>
+                        <td>@item.Product.Name</td>
+                        <td align="center">@item.Amount</td>
+                        <td align="center">@item.Product.Unit.Name</td>
+                        <td align="center">@item.Price</td>
+                        <td align="center">@sum</td>
+                    </tr>
+                }
+                <tr>
+                    <th colspan="6" align="right" font-weight normal>Total sum:&nbsp;</th>
+                    <th>@Model.Order.TotalSum</th>
+                </tr>
+            </table>
+            <br />
+            <b> Item quantity: @Model.Items.Count </b>       
+        </fieldset>
+    </form>
+
+    <fieldset>
+        <legend>Options</legend>
+        <form action="@Url.Action("AddOrderItem", "OrderItem")" method="get" target="_self">
+            <input type="hidden" name="orderId" value="@Model.Order.Id" />
+            <button type="submit" class="btn">Add item</button>
+        </form>
+        <form action="@Url.Action("DeleteOrderItem", "OrderItem")" method="get" target="_self">
+            <input type="hidden" name="itemId" id="hiddenDeletedOrderItemId" />
+            <input type="hidden" name="orderId" value="@Model.Order.Id" />
+            <button type="submit" onclick="" class="btn">Delete item</button>
+            @if (ViewData["ErrorMessageEmptyItem"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageEmptyItem"]</b>
+            }
+        </form> 
+      
+        <div>
+            <button id="btnChangeItem" class="btn">Change item amount</button>           
+            @if (ViewData["ErrorMessageEmptyChangeAmountItem"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageEmptyChangeAmountItem"]</b>
+            }
+            @if (ViewData["ErrorMessageEmptyAmount"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageEmptyAmount"]</b>
+            }
+
+            @if (ViewData["ErrorMessageWrongAmount"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageWrongAmount"]</b>
+            }
+            
+        
+        @if (ViewData["ErrorMessageTooBigAmount"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageTooBigAmount"]</b>
+            }
+        </div> @*Change item amount Button*@
+        <br />
+        
+        <form action="@Url.Action("Index", "Home")" method="post" target="_self">
+            <input type="submit" value="Home" class="btn" />
+        </form>
+
+        <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+            <input type="submit" value="Log out" class="btn" />
+        </form>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close">Close</span>
+                    <h3>Change item amount</h3>
+                </div>
+                <div class="modal-body">
+                    <br />                    
+                    <form action="@Url.Action("ChangeOrderItemAmount", "OrderItem")" method="get" target="_self">
+                         <input type="hidden" name="itemId" id="hiddenOrderItemId" /> 
+                        <input type="hidden" name="selectedOrderId" value="@Model.Order.Id" />
+                        <b>Enter new amount: </b>&nbsp;
+                        <input type="text" name="newAmount" /> &nbsp;&nbsp;&nbsp;                        
+                        <input type="submit" value="Add to order" onclick="" class="btnModal"> 
+                        <br />
+                        @*<b style="color:red;"> Amount should be less than: </b>*@
+                        <br />                     
+                    </form>
+                    <br />
+                    <br />
+                </div>
+                <div class="modal-footer">   
+                    <h3>   </h3>                  
+                </div>
+            </div>
+        </div>
+    </fieldset>    
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        function highlight(e) {
+            if (selected[0]) selected[0].className = '';
+            e.target.parentNode.className = 'selected';
+        
+            var itemId = $("tr.selected").attr("data-itemid");
+
+            $("#hiddenDeletedOrderItemId").val(itemId);
+            $("#hiddenOrderItemId").val(itemId);
+        }
+
+        var table = document.getElementById('tableItems'),
+        selected = table.getElementsByClassName('selected');
+        table.onclick = highlight;
+
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("btnChangeItem");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+</script>
