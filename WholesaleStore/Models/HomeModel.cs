@@ -13,8 +13,7 @@ namespace WholesaleStore.Models
             Customers = new List<Customer>();
             Categories = new List<Category>();
             Orders = new List<Order>();
-            Units = new List<Unit>();
-          //  LoggedUser.Id = new int();         
+            Units = new List<Unit>();                 
         }
 
         public List<Product> Products { get; set; }
@@ -22,7 +21,6 @@ namespace WholesaleStore.Models
         public List<Category> Categories { get; set; }
         public List<Order> Orders { get; set; }
         public List<Unit> Units { get; set; }
-        public User LogUser { get; set; }
-       // public LoggedUser LoggedUser { get; set; }
+        public User LogUser { get; set; }       
     }
 }

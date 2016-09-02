@@ -49,6 +49,7 @@ namespace WholesaleStore.Controllers
         }
         public ActionResult SaveUnit(string name)
         {
+            #region ErrorMessage
             if (String.IsNullOrEmpty(name))
             {
                 InsertError error = new InsertError();
@@ -56,6 +57,7 @@ namespace WholesaleStore.Controllers
                 TempData["error"] = error;
                 return RedirectToAction("AddUnit", "Unit");
             }
+            #endregion
 
             using (var context = new WHOLESALE_STOREEntities())
             {
