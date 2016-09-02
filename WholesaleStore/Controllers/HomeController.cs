@@ -23,7 +23,7 @@ namespace WholesaleStore.Controllers
 
                     model.LogUser = new User() { Id = user.ID, Name = user.NAME, Usertype = usertype };
 
-                    #region ModelFilling
+                    #region ModelDataFilling
                     foreach (var cs in context.CUSTOMER.ToList())
                     {
                         model.Customers.Add(new Customer() { Id = cs.ID, Name = cs.NAME, Address = cs.C_ADDRESS, Email = cs.EMAIL });
