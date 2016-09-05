@@ -150,14 +150,14 @@
 
             <div>
                 &nbsp;<b> Amount: </b>
-                                @if (@Model.ProductObject.Amount == null)
-                                {
-                                    <input type="text" name="Amount" id="newAmount" /><br />
-                                }
-                                else
-                                {
-                                    <input type="text" name="Amount" id="newAmount" value="@Model.ProductObject.Amount.ToString()" />
-                                }
+                @if (@Model.ProductObject.Amount == null)
+                {
+                    <input type="text" name="Amount" id="newAmount" /><br />
+                }
+                else
+                {
+                    <input type="text" name="Amount" id="newAmount" value="@Model.ProductObject.Amount.ToString()" />
+                }                
                 @if (ViewData["ErrorMessageEmptyAmount"] != null)
                 {
                     <b style="color:red">@ViewData["ErrorMessageEmptyAmount"]</b>
@@ -172,7 +172,7 @@
             <div>
                 <br />
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Unit:</b>
-                <select size="1" name="Unit" style="width: 172px">
+                <select size="1" name="Unit" style="width: 172px" id="newUnit">
                     @if (Model.CurrentUnitId == null || Model.CurrentUnitId == 0)
                     {
                         <option value="" style="display:none; color:grey;">Choose unit</option>
@@ -221,7 +221,7 @@
             <div>
                 <br />
                 <b>Category:</b>
-                <select size="1" name="category" style="width: 175px">
+                <select size="1" name="category" style="width: 175px" id="newCategory">
                     @if (Model.CurrentCategoryId == null || Model.CurrentCategoryId == 0)
                     {
                         <option value="" style="display:none; color:grey;">Choose category</option>
@@ -309,7 +309,7 @@
         btn.onclick = function () {
             var barCodeCheck = /^([0-9]{13})$/;
 
-            if ($("#newName").val() && $("#newBarCode").val() && $("#newAmount").val() && $("#newPrice").val() && barCodeCheck.test($("#newBarCode").val())) {
+            if ($("#newName").val() && $("#newBarCode").val() && $("#newAmount").val() && $("#newPrice").val() && barCodeCheck.test($("#newBarCode").val()) && $("#newCategory").val() && $("#newUnit").val() && $("#newPrice").val() > 0) {
                 modal.style.display = "block";
                 setTimeout(function () { debugger; $("#FormNewProduct").submit(); }, 1000);
             }

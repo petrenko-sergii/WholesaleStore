@@ -35,7 +35,7 @@ namespace WholesaleStore.Controllers
 
             using (var context = new WHOLESALE_STOREEntities())
             {
-                foreach (var ct in context.CATEGORY.ToList())
+                foreach (var ct in context.CATEGORY.OrderBy(ct => ct.NAME).ToList())
                 {
                     var category = new Category() { Id = ct.ID, Name = ct.NAME };
                     model.Categories.Add(category);
@@ -95,7 +95,7 @@ namespace WholesaleStore.Controllers
         }
         public ActionResult EditCategory(int? categoryId)
         {
-            #region ErrorMessages
+            #region ErrorMessage
             if (categoryId.HasValue == false)
             {
                 InsertError errorEdit = new InsertError();
@@ -103,6 +103,12 @@ namespace WholesaleStore.Controllers
                 TempData["errorEmptyEditCategory"] = errorEdit;
 
                 return RedirectToAction("ShowCategories", "Category");
+            }
+
+            InsertError err = TempData["error"] as InsertError;
+            if (err != null)
+            {
+                ViewData["ErrorMessageEmptyName"] = err.ErrorMessageEmptyName;
             }
             #endregion
 
@@ -120,6 +126,15 @@ namespace WholesaleStore.Controllers
         }
         public ActionResult SaveEditedCategory(int categoryId, string name)
         {
+            if (String.IsNullOrEmpty(name))
+            {
+                InsertError error = new InsertError();
+                error.ErrorMessageEmptyName = "Enter the name!";
+                TempData["error"] = error;
+                
+                return RedirectToAction("EditCategory", "Category", new { categoryId });
+            }
+
             using (var context = new WHOLESALE_STOREEntities())
             {
                 var categoryDB = context.CATEGORY.Find(categoryId);

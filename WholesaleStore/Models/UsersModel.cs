@@ -12,7 +12,7 @@ namespace WholesaleStore.Models
         public List<User> Users { get; set; }
         public InsertError ErrorMessageLog { get; set; }
         public InsertError ErrorMessagePassword { get; set; }
-               
+    
         public UsersModel()
         {
             Users = new List<User>();

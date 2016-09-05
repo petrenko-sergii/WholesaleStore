@@ -6,7 +6,7 @@
 
 <style>
     #NewUnitFieldSet {
-        width: 18%;
+        width: 20%;
         height: 60%;
         position: center;
         text-align: left;
@@ -107,7 +107,16 @@
             <legend>Unit edit form</legend>
             <input type="hidden" name="unitId" value="@Model.UnitObject.Id" /><br />
             <b>Name:</b>
-            <input type="text" name="Name" size="20" id="editName" value="@Model.UnitObject.Name" /><br />
+            @if (ViewData["ErrorMessageEmptyName"] != null)
+            {
+                <input type="text" name="Name" size="20" id="editName"/>
+                <b style="color:red">@ViewData["ErrorMessageEmptyName"]</b>
+            }
+            else
+            {
+                <input type="text" name="Name" size="20" id="editName" value="@Model.UnitObject.Name" />
+            }
+            <br />
         </fieldset>
     </div>
 </form>

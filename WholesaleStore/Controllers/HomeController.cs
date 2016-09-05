@@ -23,27 +23,6 @@ namespace WholesaleStore.Controllers
 
                     model.LogUser = new User() { Id = user.ID, Name = user.NAME, Usertype = usertype };
 
-                    #region ModelDataFilling
-                    foreach (var cs in context.CUSTOMER.ToList())
-                    {
-                        model.Customers.Add(new Customer() { Id = cs.ID, Name = cs.NAME, Address = cs.C_ADDRESS, Email = cs.EMAIL });
-                    }
-
-                    foreach (var un in context.UNIT.ToList())
-                    {
-                        model.Units.Add(new Unit() { Id = un.ID, Name = un.NAME });
-                    }
-
-                    foreach (var ct in context.CATEGORY.ToList())
-                    {
-                        model.Categories.Add(new Category() { Id = ct.ID, Name = ct.NAME });
-                    }
-
-                    foreach (var pr in context.PRODUCT.ToList())
-                    {
-                        model.Products.Add(new Product() { Id = pr.ID, Name = pr.NAME, BarCode = pr.BARCODE, Price = pr.PRICE, Amount = pr.AMOUNT });
-                    }
-                    #endregion
                     var view = View(model);
                     view.ViewBag.userId = LoggedUserDB.VALUE;
 

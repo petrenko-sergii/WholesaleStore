@@ -49,7 +49,6 @@ namespace WholesaleStore.Controllers
         }
         public ActionResult SaveUnit(string name)
         {
-            #region ErrorMessage
             if (String.IsNullOrEmpty(name))
             {
                 InsertError error = new InsertError();
@@ -57,7 +56,6 @@ namespace WholesaleStore.Controllers
                 TempData["error"] = error;
                 return RedirectToAction("AddUnit", "Unit");
             }
-            #endregion
 
             using (var context = new WHOLESALE_STOREEntities())
             {
@@ -99,6 +97,12 @@ namespace WholesaleStore.Controllers
 
                 return RedirectToAction("ShowUnits", "Unit");
             }
+
+            InsertError err = TempData["error"] as InsertError;
+            if (err != null)
+            {
+                ViewData["ErrorMessageEmptyName"] = err.ErrorMessageEmptyName;
+            }
             #endregion
 
             var model = new UnitModel();
@@ -115,6 +119,16 @@ namespace WholesaleStore.Controllers
         }
         public ActionResult SaveEditedUnit(int unitId, string name)
         {
+            if (String.IsNullOrEmpty(name))
+            {
+                InsertError error = new InsertError();
+                error.ErrorMessageEmptyName = "Enter the name!";
+                TempData["error"] = error;
+
+                return RedirectToAction("EditUnit", "Unit", new { unitId });
+            }
+
+
             using (var context = new WHOLESALE_STOREEntities())
             {
                 var UnitDB = context.UNIT.Find(unitId);

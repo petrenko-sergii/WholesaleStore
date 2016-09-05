@@ -2,30 +2,30 @@
     <meta charset="utf-8">
     <title></title>
     <style>
-         .css-serial {
+        .css-serial {
             counter-reset: serial-number;
-             }
+        }
 
-         .css-serial td:first-child:before {
+            .css-serial td:first-child:before {
                 counter-increment: serial-number;
                 content: counter(serial-number);
-            }   
+            }
 
         td {
-                border: 1px #DDD solid;
-                padding: 1px;
-                cursor: pointer;
-            }
+            border: 1px #DDD solid;
+            padding: 1px;
+            cursor: pointer;
+        }
 
-            .selected {
-                background-color: #6495ED;
-                color: #FFF;
-            }
+        .selected {
+            background-color: #6495ED;
+            color: #FFF;
+        }
 
-            table, th, td {
-                border: 1px solid black;
-                border-collapse: collapse;
-            }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
 
         .btnShowProductsPage {
             width: 230px;
@@ -40,8 +40,8 @@
             margin: 2px 2px;
             cursor: pointer;
         }
-        
-       .btnSmall {
+
+        .btnSmall {
             width: 80px;
             background-color: #6495ED;
             border: none;
@@ -54,45 +54,45 @@
             margin: 2px 2px;
             cursor: pointer;
         }
-        
-        
-          /* The Modal (background) */
-            .modal {
-                display: none; /* Hidden by default */
-                position: fixed; /* Stay in place */
-                z-index: 1; /* Sit on top */
-                padding-top: 100px; /* Location of the box */
-                left: 0;
-                top: 0;
-                width: 100%; /* Full width */
-                height: 100%; /* Full height */
-                overflow: auto; /* Enable scroll if needed */
-                background-color: rgb(0,0,0); /* Fallback color */
-                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            }
 
-            /* Modal Content */
-            .modal-content {
-                position: relative;
-                background-color: #fefefe;
-                margin: auto;
-                padding: 0;
-                border: 1px solid #888;
-                width: 80%;
-                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-                -webkit-animation-name: animatetop;
-                -webkit-animation-duration: 0.4s;
-                animation-name: animatetop;
-                animation-duration: 0.4s
-            }
 
-            /* The Close Button */
-            .close {
-                color: white;
-                float: right;
-                font-size: 20px;
-                font-weight: bold;
-            }
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 80%;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+        }
+
+        /* The Close Button */
+        .close {
+            color: white;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+        }
 
             .close:hover,
             .close:focus {
@@ -101,21 +101,26 @@
                 cursor: pointer;
             }
 
-            .modal-header {
-                padding: 2px 16px;
-                background-color: #6495ED;
-                color: white;
-            }
+        .modal-header {
+            padding: 2px 16px;
+            background-color: #6495ED;
+            color: white;
+        }
 
-            .modal-body {padding: 2px 16px;}
+        .modal-body {
+            padding: 2px 16px;
+        }
 
-            .modal-footer {
-                padding: 2px 16px;
-                background-color: #6495ED;
-                color: white;
-            }
-
-
+        .modal-footer {
+            padding: 2px 16px;
+            background-color: #6495ED;
+            color: white;
+        }
+        
+    button.relative {
+        position: relative;
+        left: 300px;
+    }
     </style>
 </head>
 
@@ -125,6 +130,9 @@
 @model WholesaleStore.Models.ProductModel
 
 <form action="@Url.Action("FindProducts", "Product")" method="post" target="_self" id="FormShowProducts">
+    <input type="hidden" name="productId" id="hiddenDeletedProductId" />
+    <input type="hidden" name="productId" id="hiddenEditProductId" />
+    <input type="hidden" name="productId" id="hiddenProductToZeroId" />
     <fieldset>
         <legend>Products</legend>
         <img src="~/Content/Images/Products.jpg" alt="Sample Photo" style="width:735px;height:140px;" />
@@ -133,90 +141,97 @@
             @Html.TextBox("searchString", ViewBag.CurrentFilter as string)
             <input type="submit" value="Search" class="btnSmall" />
         </p>
-        <table style="width:40%" id="tableProducts" class="css-serial">
-            <tr>
-                <th>#</th>
-                <th>Barcode</th>
-                <th>Category</th>
-                <th>Name</th>
-                <th>Amount</th>
-                <th>Unit</th>
-                <th>Price, grn</th>
-            </tr>
-            @foreach (var pr in Model.Products)
-            {
-                <tr data-productid="@pr.Id">
-                    <td align="center"></td>
-                    <td align="center">@pr.BarCode</td>
-                    <td align="center">@pr.Category.Name</td>
-                    <td>@pr.Name</td>
-                    <td align="center">@pr.Amount</td>
-                    <td align="center">@pr.Unit.Name</td>
-                    <td align="center">@pr.Price</td>
+        @if (@Model.Products.Count == 0)
+        {
+            <p style="color: red"><strong>No Products </strong></p>
+        }
+        else
+        {
+            <table style="width:60%" id="tableProducts" class="css-serial">
+                <tr>
+                    <th>#</th>
+                    <th>Barcode</th>
+                    <th>Category</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Unit</th>
+                    <th>Price, grn</th>
                 </tr>
-            }
-        </table>
+                @foreach (var pr in Model.Products)
+                {
+                    <tr data-productid="@pr.Id">
+                        <td align="center"></td>
+                        <td align="center">@pr.BarCode</td>
+                        <td align="center">@pr.Category.Name</td>
+                        <td>@pr.Name</td>
+                        <td align="center">@pr.Amount</td>
+                        <td align="center">@pr.Unit.Name</td>
+                        <td align="center">@pr.Price</td>
+                    </tr>
+                }
+            </table>
 
-        <br />
-        <b> Item quantity: @Model.Products.Count </b>
+            <br />
+            <b> Item quantity: @Model.Products.Count </b>
+        }
     </fieldset>
 </form> @*Products Table*@
 
 
 <fieldset>
     <legend>Options</legend>
-    <form action="@Url.Action("AddProduct", "Product")" method="get" target="_self">
-        <button type="submit" class="btnShowProductsPage">Add new product</button>
-    </form> @*Add Button*@
-
-    <form action="@Url.Action("DeleteProduct", "Product")" method="get" target="_self" id="FormDeleteProduct">
-        <input type="hidden" name="productId" id="hiddenDeletedProductId" />
-        <button class="btnShowProductsPage" id="btnDelete">Delete product</button>
+    <button class="btnShowProductsPage" id="btnAdd">Add product</button>
     
-        @if (ViewData["ErrorMessageEmptyProductId"] != null)
-        {
-            <b style="color:red">@ViewData["ErrorMessageEmptyProductId"]</b>
-        }
-</form>@*Delete Button*@
+    @*Change product amount Button*@
+    <button id="btnChangeProductAmount" class="btnShowProductsPage">Change product amount</button>
+    @if (ViewData["ErrorMessageEmptyAmountChangeProductId"] != null)
+    {
+        <b style="color:red">@ViewData["ErrorMessageEmptyAmountChangeProductId"]</b>
+    }
+    @if (ViewData["ErrorMessageEmptyAmount"] != null)
+    {
+        <b style="color:red">@ViewData["ErrorMessageEmptyAmount"]</b>
+    }
 
-    <form action="@Url.Action("EditProduct", "Product")" method="get" target="_self">
-        <input type="hidden" name="productId" id="hiddenEditProductId" />
-        <button type="submit" onclick="" class="btnShowProductsPage">Edit product</button>
-        @if (ViewData["ErrorMessageEmptyEditProductId"] != null)
-        {
-            <b style="color:red">@ViewData["ErrorMessageEmptyEditProductId"]</b>
-        }
-    </form> @*Edit product Button*@
+    @if (ViewData["ErrorMessageWrongAmount"] != null)
+    {
+        <b style="color:red">@ViewData["ErrorMessageWrongAmount"]</b>
+    }
+    
 
-    <form action="@Url.Action("ProductAmountToZero", "Product")" method="get" target="_self">
-        <input type="hidden" name="productId" id="hiddenProductToZeroId" />
-        <button type="submit" onclick="" class="btnShowProductsPage">Zero product amount</button>
-        @if (ViewData["ErrorMessageEmptyAmountZeroProductId"] != null)
-        {
-            <b style="color:red">@ViewData["ErrorMessageEmptyAmountZeroProductId"]</b>
-        }
-    </form> @*Zero product amount Button*@
+    <br />
+    <button class="btnShowProductsPage" id="btnDelete">Delete product</button>
+    @if (ViewData["ErrorMessageEmptyProductId"] != null)
+    {
+        <b style="color:red">@ViewData["ErrorMessageEmptyProductId"]</b>
+    }
+    
+    <button class="btnShowProductsPage" id="btnZeroAmount">Zero product amount</button>
+    @if (ViewData["ErrorMessageEmptyAmountZeroProductId"] != null)
+    {
+        <b style="color:red">@ViewData["ErrorMessageEmptyAmountZeroProductId"]</b>
+    }
+    <br />
 
-    <div>
-        <button id="btnChangeProductAmount" class="btnShowProductsPage">Change product amount</button>
-        @if (ViewData["ErrorMessageEmptyAmountChangeProductId"] != null)
-        {
-            <b style="color:red">@ViewData["ErrorMessageEmptyAmountChangeProductId"]</b>
-        }
-        @if (ViewData["ErrorMessageEmptyAmount"] != null)
-        {
-            <b style="color:red">@ViewData["ErrorMessageEmptyAmount"]</b>
-        }
 
-        @if (ViewData["ErrorMessageWrongAmount"] != null)
-        {
-            <b style="color:red">@ViewData["ErrorMessageWrongAmount"]</b>
-        }
-        <br />
-    </div> @*Change product amount Button*@
 
-    <div>
+
+
+
+    <button class="btnShowProductsPage" id="btnEdit">Edit product</button>
+    @if (ViewData["ErrorMessageEmptyEditProductId"] != null)
+    {
+        <b style="color:red">@ViewData["ErrorMessageEmptyEditProductId"]</b>
+    }
+    
+
+   
+
+       
+        
+        @*Add product amount Button*@
         <button id="btnAddProductAmount" class="btnShowProductsPage">Add product amount</button>
+
         @if (ViewData["ErrorMessageEmptyAmountAddProductId"] != null)
         {
             <b style="color:red">@ViewData["ErrorMessageEmptyAmountAddProductId"]</b>
@@ -230,10 +245,10 @@
         {
             <b style="color:red">@ViewData["ErrorMessageWrongAddAmount"]</b>
         }
-        <br />
-    </div>@*Add product amount Button*@
 
-    <div>
+
+        <br />
+        @*Set new price Button*@
         <button id="btnNewProductPrice" class="btnShowProductsPage">Set new price</button>
         @if (ViewData["ErrorMessageEmptyPriceProductId"] != null)
         {
@@ -248,7 +263,7 @@
         {
             <b style="color:red">@ViewData["ErrorMessageWrongPrice"]</b>
         }
-    </div>@*Set new price Button*@
+   
 
 
 
@@ -256,7 +271,7 @@
     <div id="DeleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="close">Close</span>
+                @*<span class="close">Close</span>*@
                 <h3>Info</h3>
             </div>
             <div class="modal-body">
@@ -323,7 +338,7 @@
         <!-- Modal content -->
         <div class="modal-content">
             <div class="modal-header">
-                <spannewprice class="close">Close</spannewprice>
+                <span class="close">Close</span>
                 <h3>Set new product price</h3>
             </div>
             <div class="modal-body">
@@ -342,14 +357,10 @@
         </div>
     </div>
     <br />
-   
-    <form action="@Url.Action("Index", "Home")" method="post" target="_self">
-        <input type="submit" value="Home" class="btnShowProductsPage" />
-    </form>
+    <br />
 
-    <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
-        <input type="submit" value="Log out" class="btnShowProductsPage" />
-    </form>
+    <button id="btnHome" class="btnShowProductsPage">Home</button>
+    <button id="btnLogOut" class="btnShowProductsPage">Log out</button>
 </fieldset>
 
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
@@ -383,7 +394,12 @@
     // When the user clicks the button, open the modal
 
     btn.onclick = function () {
-        modal.style.display = "block";
+        if ($("#hiddenProductChangeAmountId").val()) {
+            modal.style.display = "block";
+        }
+        else {
+            document.location = "@Url.Action("ChangeProductAmount", "Product")" + "?newAmount=" + 0;
+        }
     }
 
     // When the user clicks on <span> (x), close the modal
@@ -408,7 +424,12 @@
 
     // When the user clicks the button, open the modal
     btnAddAmount.onclick = function () {
-        modalAddAmount.style.display = "block";
+        if ($("#hiddenProductAddAmountId").val()) {
+            modalAddAmount.style.display = "block";
+        }
+        else {
+            document.location = "@Url.Action("AddProductAmount", "Product")" + "?addAmount=" + 0;;
+        }
     }
 
     // When the user clicks on <span> (x), close the modal
@@ -433,7 +454,12 @@
 
     // When the user clicks the button, open the modal
     btnNewPrice.onclick = function () {
-        modalNewPrice.style.display = "block";
+        if ($("#hiddenProductNewPriceId").val()) {
+            modalNewPrice.style.display = "block";
+        }
+        else {
+            document.location = "@Url.Action("SetNewProductPrice", "Product")" + "?newPrice=" + 0;;
+        }
     }
 
     // When the user clicks on <span> (x), close the modal
@@ -449,38 +475,74 @@
     }
 
     // Get the modalDelete
-    var modal = document.getElementById('DeleteModal');
+    var modalDelete = document.getElementById('DeleteModal');
 
     // Get the button that opens the modal
-    var btn = document.getElementById("btnDelete");
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[3];
+    var btnDelete = document.getElementById("btnDelete");
 
     // When the user clicks the button, open the modal
-    btn.onclick = function () {
+    btnDelete.onclick = function () {
         if ($("#hiddenDeletedProductId").val()) {
-            //modal.style.display = "block";
-            setTimeout(function () { debugger; $("#FormDeleteProduct").submit(); }, 2000);
+            modalDelete.style.display = "block";
+            setTimeout(function () { debugger; document.location = "@Url.Action("DeleteProduct", "Product")" + "?productId=" + $("#hiddenDeletedProductId").val(); }, 1000);
+
         }
         else {
-            debugger; $("#FormShowProducts").submit();
+            debugger; document.location = "@Url.Action("DeleteProduct", "Product")";
         }
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
     }
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+        if (event.target == modalDelete) {
+            modalDelete.style.display = "none";
         }
     }
+
+    //region Add Button
+    var btnAdd = document.getElementById("btnAdd");
+
+    btnAdd.onclick = function () {
+        document.location = "@Url.Action("AddProduct", "Product")";
+    }
+    //endregion Add Button
+
+    var btnEdit = document.getElementById("btnEdit");
+
+    // When the user clicks the button, open the modal
+    btnEdit.onclick = function () {
+        if ($("#hiddenEditProductId").val()) {
+            document.location = "@Url.Action("IdentityProduct", "Product")" + "?productId=" + $("#hiddenEditProductId").val();
+        }
+        else {
+            debugger; document.location = "@Url.Action("IdentityProduct", "Product")";
+        }
+    }
+
+
+    var btnZeroAmount = document.getElementById("btnZeroAmount");
+
+    // When the user clicks the button, open the modal
+    btnZeroAmount.onclick = function () {
+        if ($("#hiddenProductToZeroId").val()) {
+            document.location = "@Url.Action("ProductAmountToZero", "Product")" + "?productId=" + $("#hiddenProductToZeroId").val();
+        }
+        else {
+            debugger; document.location = "@Url.Action("ProductAmountToZero", "Product")";
+        }
+    }
+
+    var btnHome = document.getElementById("btnHome");
+
+    btnHome.onclick = function () {
+            document.location = "@Url.Action("Index", "Home")";
+    }
+
+    var btnLogOut = document.getElementById("btnLogOut");
+
+    btnLogOut.onclick = function () {
+        document.location = "@Url.Action("LoginPage", "Login")";
+    }
 </script>
-
-
 
 

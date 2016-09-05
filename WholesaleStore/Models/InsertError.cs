@@ -9,7 +9,9 @@ namespace WholesaleStore.Models
     public class InsertError
     {
         public string ErrorMessageLog { get; set; }
+        public string ErrorMessageWrongLog { get; set; }
         public string ErrorMessagePassword { get; set; }
+        public string ErrorMessageNotStrongPassword { get; set; }
         public string ErrorMessageConfirmPassword { get; set; }
         public string ErrorMessageEmptyConfirmPassword { get; set; }
         public string ErrorMessageTooBigAmount { get; set; }
@@ -46,5 +48,7 @@ namespace WholesaleStore.Models
         public string ErrorMessageEmptyPriceProductId { get; set; }
         public string ErrorMessageEmptyOrder { get; set; }
         public string ErrorMessageEmptyShowOrder { get; set; }
+        public string ErrorMessageEmptyUser { get; set; }
+        public string ErrorMessageNotAdminUser { get; set; }
     }
 }

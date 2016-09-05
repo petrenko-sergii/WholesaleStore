@@ -9,7 +9,7 @@ namespace WholesaleStore.Controllers
 {
     public class OrderController : Controller
     {
-        public ActionResult ShowOrders(int userId)
+        public ActionResult ShowOrders()
         {
             #region ErrorMessages
             InsertError errorOrder = TempData["errorEmptyOrder"] as InsertError;
@@ -26,23 +26,30 @@ namespace WholesaleStore.Controllers
 
             #endregion
 
-            var model = new OrderModel();
-
             using (var context = new WHOLESALE_STOREEntities())
             {
+                var model = new OrderModel();
                 foreach (var orderDB in context.ORDER.ToList())
                 {
-                    var customer = new Customer() { Name = orderDB.CUSTOMER.NAME };
-                    var order = new Order() { Id = orderDB.ID, OrderNumber = orderDB.ORDERNUMBER, Customer = customer, TotalSum = (decimal)orderDB.TOTALSUM, Date = orderDB.DATE };
-                    model.Orders.Add(order);
+                    if (orderDB.TOTALSUM == 0)
+                    {
+                        DeleteOrder(orderDB.ID);
+                    }
+                    else
+                    {
+                        var customer = new Customer() { Name = orderDB.CUSTOMER.NAME };
+                        var order = new Order() { Id = orderDB.ID, OrderNumber = orderDB.ORDERNUMBER, Customer = customer, TotalSum = (decimal)orderDB.TOTALSUM, Date = orderDB.DATE };
+                        model.Orders.Add(order);
+                    }
                 }
-            }
+                var LoggedUserDB = context.LOGGEDUSER.First();
 
             var view = View("~/Views/Order/ShowOrders.cshtml", model);
-            view.ViewBag.userId = userId;
+            view.ViewBag.userId = LoggedUserDB.VALUE;
             return view;
+            }
         }
-        public ActionResult CheckShowOrders(int userId, int? orderId)
+        public ActionResult CheckShowOrders(int? orderId)
         {
             #region ErrorMessage
             if (orderId.HasValue == false)
@@ -52,14 +59,14 @@ namespace WholesaleStore.Controllers
                 error.ErrorMessageEmptyShowOrder = "Choose the order!";
                 TempData["errorEmptyShowOrder"] = error;
 
-                return RedirectToAction("ShowOrders", "Order", new { userId });
+                return RedirectToAction("ShowOrders", "Order");
             }
             #endregion
 
             return RedirectToAction("ShowOrderItems", "OrderItem", new {orderId}); 
         }
 
-        public ActionResult AddOrder(int userId)
+        public ActionResult AddOrder()
         {
             var model = new HomeModel();
 
@@ -78,31 +85,50 @@ namespace WholesaleStore.Controllers
             }
 
             var view = View("~/Views/Order/AddOrder.cshtml", model);
-            view.ViewBag.userId = userId;
             return view;
         }
-
-        public ActionResult NewOrder(int? customerId, int userId)
+        public ActionResult CheckOrderIsEmpty(int orderId)
         {
+            using (var context = new WHOLESALE_STOREEntities())
+            {
+                var orderDB = context.ORDER.Find(orderId);
 
+                if (orderDB.TOTALSUM == 0)
+                {
+                    DeleteOrder(orderId);
+                    context.SaveChanges();
+                    
+                    return RedirectToAction("ShowOrders", "Order");
+                }
+            }
+
+            return RedirectToAction("ShowOrderItems", "OrderItem", new { orderId }); 
+        }
+
+        public ActionResult NewOrder(int? customerId)
+        {
             if (customerId.HasValue == false)
             {
                 InsertError error = new InsertError();
                 error.ErrorMessageEmptyCustomer = "Choose the customer or create new!";
                 TempData["error"] = error;
 
-                return RedirectToAction("AddOrder", "Order", new {userId});
+                return RedirectToAction("AddOrder", "Order");
             }
+
+
 
             using (var context = new WHOLESALE_STOREEntities())
             {
-                var order = context.ORDER.Add(new ORDER { ORDERNUMBER = DateTime.Now.ToString("ddMMyy_hhmm"), DATE = DateTime.Now, CUSTOMER_ID = Convert.ToInt32(customerId), USER_ID = userId });
+                var LoggedUserDB = context.LOGGEDUSER.First();
+                var order = context.ORDER.Add(new ORDER { ORDERNUMBER = DateTime.Now.ToString("ddMMyy_hhmm"), DATE = DateTime.Now, CUSTOMER_ID = Convert.ToInt32(customerId), USER_ID = Convert.ToInt16(LoggedUserDB.VALUE) });
+
                 context.SaveChanges();
                 return RedirectToAction("AddOrderItem","OrderItem", new { orderId = order.ID });
             }
         }
 
-        public ActionResult DeleteOrder(int? orderId, int userId)
+        public ActionResult DeleteOrder(int? orderId)
         {
             #region ErrorMessages
             if (orderId.HasValue == false)
@@ -111,7 +137,7 @@ namespace WholesaleStore.Controllers
                 error.ErrorMessageEmptyOrder = "Choose the order!";
                 TempData["errorEmptyOrder"] = error;
 
-                return RedirectToAction("ShowOrders", "Order", new { userId });
+                return RedirectToAction("ShowOrders", "Order");
             }
             #endregion
 
@@ -140,7 +166,7 @@ namespace WholesaleStore.Controllers
                 }
                 context.SaveChanges();
             }
-            return View("~/Views/ItemDeletedTemp.cshtml");
+            return RedirectToAction("ShowOrders", "Order");
         }
 
     }

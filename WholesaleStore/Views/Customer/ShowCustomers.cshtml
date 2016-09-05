@@ -170,7 +170,9 @@
         }
     </div>@*Delete Button*@
 
-    <form action="@Url.Action("EditCustomer", "Customer")" method="get" target="_self">
+    
+    @*<form action="@Url.Action("EditCustomer", "Customer")" method="get" target="_self">*@
+    <form action="@Url.Action("FindCustomer", "Customer")" method="get" target="_self">
         <input type="hidden" name="customerId" id="hiddenCustomerId" />
         <button type="submit" onclick="" class="btnShowCustomersPage">Edit customer</button>
         @if (ViewData["ErrorMessageEmptyEditCustomer"] != null)

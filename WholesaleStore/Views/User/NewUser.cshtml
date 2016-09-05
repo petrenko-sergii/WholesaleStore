@@ -1,0 +1,261 @@
+﻿@{
+    ViewBag.Title = "NewUser";
+}
+
+@model WholesaleStore.Models.UserTypeModel
+
+<style>
+    #NewUserFieldSet {
+        width: 32%;
+        height: 60%;
+        position: center;
+        text-align: left;
+        margin: auto;
+    }
+
+    .btnLoginForm {
+        width: 170px;
+        background-color: #6495ED;
+        border: none;
+        color: white;
+        padding: 4px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 2px 2px;
+        cursor: pointer;
+    }
+
+    div.relative {
+        position: relative;
+        left: 123px;
+    }
+    .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                padding-top: 100px; /* Location of the box */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+                position: relative;
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                width: 33%;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 0.4s;
+                animation-name: animatetop;
+                animation-duration: 0.4s
+            }
+
+            /* The Close Button */
+            .close {
+                color: white;
+                float: right;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .modal-header {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+
+            .modal-body {padding: 2px 16px;}
+
+            .modal-footer {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+</style>
+
+
+<form action="@Url.Action("SaveUser", "User")" method="post" target="_self" id="FormNewUser">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="NewUserFieldSet">
+        <fieldset>
+            <legend>New user info</legend>
+            <br />
+            <img src="~/Content/Images/NewUser.jpg" alt="Sample Photo" style="width:100px;height:100px;" />
+            <h2>Please, enter new data: </h2>
+            <br />
+            <div>
+                <b>Surname/Name: </b>&nbsp;&nbsp;&nbsp;
+                @if (String.IsNullOrEmpty(Model.NewUserName))
+                {
+            <input type="text" name="name" id="newName" />
+                }
+                else
+                {
+            <input type="text" name="name" id="newName" value="@Model.NewUserName.ToString()" />
+                }
+
+                @if (ViewData["ErrorMessageLog"] != null)
+                {
+            <b style="color:red">@ViewData["ErrorMessageLog"]</b>
+                }
+                <br />
+                <br />
+            </div>@*Surname/name*@
+
+            <div>
+                <b>Password: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="password" name="password" id="newPassword" />
+                @if (ViewData["ErrorMessagePassword"] != null)
+                {
+                     <b style="color:red">@ViewData["ErrorMessagePassword"]</b>
+                }
+                @if (ViewData["ErrorMessageNotStrongPassword"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageNotStrongPassword"]</b>
+                }                
+                <br />
+                <br />
+            </div>@*Password*@
+
+            <div>
+                <b>Confirm password: </b>
+                <input type="password" name="confirmPassword" id="newConfirmPassword" />
+
+                @if (ViewData["ErrorMessageEmptyConfirmPassword"] != null)
+                {
+            <b style="color:red">@ViewData["ErrorMessageEmptyConfirmPassword"]</b>
+                }
+                @if (ViewData["ErrorMessageConfirmPassword"] != null && ViewData["ErrorMessageEmptyConfirmPassword"] == null)
+                {
+            <b style="color:red">@ViewData["ErrorMessageConfirmPassword"]</b>
+                }
+                <br />
+                <br />
+            </div>@*Confirm Password*@
+
+            <div>
+                <b>Usertype: </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <select size="1" name="userType" style="width: 172px" id="newUserType">
+                    @if (Model.CurrentUserTypeId == null || Model.CurrentUserTypeId == 0)
+                    {
+                        <option value="" style="display:none; color:grey;">Choose usertype</option>
+                    }
+
+                    @foreach (var userType in Model.UserTypes)
+                    {
+                        if (@userType.Id == @Model.CurrentUserTypeId)
+                        {
+                            <option value="@userType.Id" selected="selected">@userType.Name</option>
+                        }
+                        else
+                        {
+                            if (@userType.Name != "Admin")
+                            {
+                                <option value="@userType.Id">@userType.Name</option>
+                            }
+                        }
+                    }
+
+                </select>
+                @if (ViewData["ErrorMessageEmptyUserType"] != null)
+                {
+                    <b style="color:red">@ViewData["ErrorMessageEmptyUserType"]</b>
+                }
+            </div>@*UserType*@
+        </fieldset>
+    </div>
+</form>
+
+<div id="NewUserFieldSet">
+    <fieldset>
+        <legend>Options</legend>
+        <div class="relative">
+            <button id="btnSave" class="btnLoginForm">Save</button>
+            <br />
+            <br />
+            <a href="@Url.Action("LoginPage", "Login")"><strong>Back to Login page</strong></a>
+        </div>
+    </fieldset>
+</div>
+
+    <!-- Modal content -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">Close</span>
+                <h3>Info</h3>
+            </div>
+            <div class="modal-body">
+                <br />
+                <h2>The User is saved!</h2>
+                <br />
+            </div>
+            <div class="modal-footer">
+                <h2></h2>
+                <h2></h2>
+                <br />
+            </div>
+        </div>
+    </div> @*Modal window - User is saved!*@
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("btnSave");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            var passwordCheck = /^[A-Za-z]\w{7,14}$/;
+
+            if ($("#newName").val() && $("#newPassword").val() && $("#newConfirmPassword").val() && $("#newUserType").val() && $("#newPassword").val() == $("#newConfirmPassword").val() && passwordCheck.test($("#newPassword").val())) {
+                modal.style.display = "block";
+                setTimeout(function () { debugger; $("#FormNewUser").submit(); }, 1000);
+            }
+            else {
+                debugger; $("#FormNewUser").submit();
+            }
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+
+

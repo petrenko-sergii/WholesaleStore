@@ -10,7 +10,6 @@ namespace WholesaleStore.Controllers
 {
     public class ProductController : Controller
     {
-        //public ActionResult ShowProducts(int userId)
         public ActionResult ShowProducts()
         {
             #region ErrorMessages
@@ -251,6 +250,7 @@ namespace WholesaleStore.Controllers
         }
         public ActionResult SaveProduct(string name, string barcode, float? amount, decimal? price, int? category, int? unit)
         {
+            #region ErrorEmptyFields
             var model = new ProductModel();
 
             #region ErrorMessages
@@ -366,7 +366,8 @@ namespace WholesaleStore.Controllers
 
                 return AddProductWithParams(model);
             }
-            
+            #endregion
+
             using (var context = new WHOLESALE_STOREEntities())
             {
                 context.PRODUCT.Add(new PRODUCT { NAME = name, BARCODE = barcode, AMOUNT = Convert.ToSingle(amount), PRICE = Convert.ToDecimal(price), CATEGORY_ID = Convert.ToInt16(category), UNIT_ID = Convert.ToInt16(unit) });
@@ -374,8 +375,127 @@ namespace WholesaleStore.Controllers
             }
             return ShowProducts();
         }
-        public ActionResult SaveEditedProduct(int productId, string name, string barcode, float amount, decimal price, int category, int unit)
+        public ActionResult SaveEditedProduct(int productId, string name, string barcode, float? amount, decimal? price, int? category, int? unit)
         {
+            #region ErrorEmptyFields
+            var model = new ProductModel();
+
+            #region ErrorMessages
+            if (String.IsNullOrEmpty(name))
+            {
+                InsertError errorName = new InsertError();
+                errorName.ErrorMessageEmptyName = "Enter the name!";
+                TempData["errorName"] = errorName;
+            }
+
+            if (String.IsNullOrEmpty(barcode))
+            {
+                InsertError errorEmptyBarCode = new InsertError();
+                errorEmptyBarCode.ErrorMessageEmptyBarCode = "Enter the Barcode!";
+                TempData["errorEmptyBarCode"] = errorEmptyBarCode;
+            }
+
+            else if (Regex.Match(barcode, @"^([0-9]{13})$").Success == false)
+            {
+                InsertError errorWrongBarCode = new InsertError();
+                errorWrongBarCode.ErrorMessageWrongBarCode = "Wrong Barcode (must be 13 digits)! ";
+                TempData["errorWrongBarCode"] = errorWrongBarCode;
+            }
+
+            if (amount == null)
+            {
+                InsertError errorEmptyAmount = new InsertError();
+                errorEmptyAmount.ErrorMessageEmptyAmount = "Enter the Amount!";
+                TempData["errorEmptyAmount"] = errorEmptyAmount;
+            }
+
+            else if (amount < 0)
+            {
+                InsertError errorWrongAmount = new InsertError();
+                errorWrongAmount.ErrorMessageWrongAmount = "Wrong Amount! Can not be negative!";
+                TempData["errorWrongAmount"] = errorWrongAmount;
+            }
+
+            if (price == null)
+            {
+                InsertError errorEmptyPrice = new InsertError();
+                errorEmptyPrice.ErrorMessageEmptyPrice = "Enter the Price!";
+                TempData["errorEmptyPrice"] = errorEmptyPrice;
+            }
+
+            else if (price <= 0)
+            {
+                InsertError errorWrongPrice = new InsertError();
+                errorWrongPrice.ErrorMessageWrongPrice = "Wrong Price! Must be more than 0!";
+                TempData["errorWrongPrice"] = errorWrongPrice;
+            }
+
+            if (category.HasValue == false)
+            {
+                InsertError errorEmptyCategory = new InsertError();
+                errorEmptyCategory.ErrorMessageEmptyCategory = "Choose the category or create new!";
+                TempData["errorEmptyCategory"] = errorEmptyCategory;
+            }
+
+            if (unit.HasValue == false)
+            {
+                InsertError errorEmptyUnit = new InsertError();
+                errorEmptyUnit.ErrorMessageEmptyUnit = "Choose the unit or create new!";
+                TempData["errorEmptyUnit"] = errorEmptyUnit;
+            }
+            #endregion
+
+            if (TempData["errorName"] != null ||
+               TempData["errorEmptyBarCode"] != null ||
+               TempData["errorWrongBarCode"] != null ||
+               TempData["errorEmptyAmount"] != null ||
+               TempData["errorWrongAmount"] != null ||
+               TempData["errorEmptyPrice"] != null ||
+               TempData["errorWrongPrice"] != null ||
+               TempData["errorEmptyCategory"] != null ||
+               TempData["errorEmptyUnit"] != null
+               )
+            {
+                using (var context = new WHOLESALE_STOREEntities())
+                {
+                    model.ProductObject.Id = productId;
+                    model.ProductObject.Name = name;
+                    model.ProductObject.BarCode = barcode;
+                    model.ProductObject.Amount = Convert.ToSingle(amount);
+                    model.ProductObject.Price = Convert.ToDecimal(price);
+
+                    if (category.HasValue)
+                    {
+                        model.ProductObject.Category = new Category();
+                        var categoryDB = context.CATEGORY.Find(category);
+
+                        model.ProductObject.Category.Id = categoryDB.ID;
+                        model.CurrentCategoryId = Convert.ToInt32(category.Value);
+                    }
+
+                    if (unit.HasValue)
+                    {
+                        model.ProductObject.Unit = new Unit();
+                        var unitDB = context.UNIT.Find(unit);
+
+                        model.ProductObject.Unit.Id = unitDB.ID;
+                        model.CurrentUnitId = Convert.ToInt32(unit.Value);
+                    }
+
+                    foreach (var ct in context.CATEGORY.ToList())
+                    {
+                        model.Categories.Add(new Category() { Name = ct.NAME, Id = ct.ID });
+                    }
+                    foreach (var _unit in context.UNIT.ToList())
+                    {
+                        model.Units.Add(new Unit() { Name = _unit.NAME, Id = _unit.ID });
+                    }
+                }
+
+                return EditProduct(model);
+            }
+            #endregion
+
             using (var context = new WHOLESALE_STOREEntities())
             {
                 var productDB = context.PRODUCT.Find(productId);
@@ -384,8 +504,8 @@ namespace WholesaleStore.Controllers
 
                 productDB.NAME = name;
                 productDB.BARCODE = barcode;
-                productDB.AMOUNT = amount;
-                productDB.PRICE = price;
+                productDB.AMOUNT = Convert.ToSingle(amount);
+                productDB.PRICE = Convert.ToDecimal(price);
                 productDB.CATEGORY = categoryDB;
                 productDB.UNIT = unitDB;
                 context.SaveChanges();
@@ -414,14 +534,14 @@ namespace WholesaleStore.Controllers
             }
             return ShowProducts();
         }
-        public ActionResult EditProduct(int? productId)
+        public ActionResult IdentityProduct(int? productId)
         {
             #region ErrorMessages
             if (productId.HasValue == false)
             {
-                InsertError errorEmptyEditProductId = new InsertError();
-                errorEmptyEditProductId.ErrorMessageEmptyEditProductId = "Choose the product!";
-                TempData["errorEmptyEditProductId"] = errorEmptyEditProductId;
+                InsertError errorEmptyProductId = new InsertError();
+                errorEmptyProductId.ErrorMessageEmptyProductId = "Choose the product!";
+                TempData["errorEmptyProductId"] = errorEmptyProductId;
 
                 return RedirectToAction("ShowProducts", "Product");
             }
@@ -451,9 +571,69 @@ namespace WholesaleStore.Controllers
                 {
                     model.Units.Add(new Unit() { Name = unit.NAME, Id = unit.ID });
                 }
-
-                return View("~/Views/Product/EditProduct.cshtml", model);
+                return EditProduct(model);
             }
+        }
+        public ActionResult EditProduct(ProductModel model)
+        {
+            #region ErrorMessages
+            InsertError errName = TempData["errorName"] as InsertError;
+            if (errName != null)
+            {
+                ViewData["ErrorMessageEmptyName"] = errName.ErrorMessageEmptyName;
+            }
+
+            InsertError errorEmptyBarCode = TempData["errorEmptyBarCode"] as InsertError;
+            if (errorEmptyBarCode != null)
+            {
+                ViewData["ErrorMessageEmptyBarCode"] = errorEmptyBarCode.ErrorMessageEmptyBarCode;
+            }
+
+            InsertError errWrongBarCode = TempData["errorWrongBarCode"] as InsertError;
+            if (errWrongBarCode != null)
+            {
+                ViewData["ErrorMessageWrongBarCode"] = errWrongBarCode.ErrorMessageWrongBarCode;
+            }
+
+            InsertError errEmptyAmount = TempData["errorEmptyAmount"] as InsertError;
+            if (errEmptyAmount != null)
+            {
+                ViewData["ErrorMessageEmptyAmount"] = errEmptyAmount.ErrorMessageEmptyAmount;
+            }
+
+
+            InsertError errWrongAmount = TempData["errorWrongAmount"] as InsertError;
+            if (errWrongAmount != null)
+            {
+                ViewData["ErrorMessageWrongAmount"] = errWrongAmount.ErrorMessageWrongAmount;
+            }
+
+            InsertError errEmptyPrice = TempData["errorEmptyPrice"] as InsertError;
+            if (errEmptyPrice != null)
+            {
+                ViewData["ErrorMessageEmptyPrice"] = errEmptyPrice.ErrorMessageEmptyPrice;
+            }
+
+            InsertError errWrongPrice = TempData["errorWrongPrice"] as InsertError;
+            if (errWrongPrice != null)
+            {
+                ViewData["ErrorMessageWrongPrice"] = errWrongPrice.ErrorMessageWrongPrice;
+            }
+
+            InsertError errEmptyCategory = TempData["errorEmptyCategory"] as InsertError;
+            if (errEmptyCategory != null)
+            {
+                ViewData["ErrorMessageEmptyCategory"] = errEmptyCategory.ErrorMessageEmptyCategory;
+            }
+
+            InsertError errEmptyUnit = TempData["errorEmptyUnit"] as InsertError;
+            if (errEmptyUnit != null)
+            {
+                ViewData["ErrorMessageEmptyUnit"] = errEmptyUnit.ErrorMessageEmptyUnit;
+            }
+            #endregion
+
+            return View("~/Views/Product/EditProduct.cshtml", model);
         }
         public ActionResult ProductAmountToZero(int? productId)
         {

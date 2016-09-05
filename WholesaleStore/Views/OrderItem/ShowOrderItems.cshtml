@@ -120,50 +120,55 @@
 
     @model WholesaleStore.Models.OrderItemModel
 
-    <form>
-        <fieldset>
-            <legend>Order information</legend>
-            <h4>Order number: @Model.Order.OrderNumber</h4>
-            <h4>Customer name: @Model.Order.Customer.Name</h4>
-            <h4>Order date/time: @Model.Order.Date</h4>
-            <b>User name: @Model.Order.User.Usertype.Name.ToLower() @Model.Order.User.Name</b>                       
-        </fieldset>
 
-        <fieldset>
-            <legend>Items in order</legend>
-            <table style="width:40%" id="tableItems" class="css-serial">
-                <tr>
-                    <th>#</th>
-                    <th>Barcode</th>
-                    <th>Product</th>
-                    <th>Amount</th>
-                    <th>Unit</th>
-                    <th>Price, grn</th>
-                    <th>Sum, grn</th>
-                </tr>
+<form action="@Url.Action("DeleteOrderItem", "OrderItem")" method="post" target="_self" id="FormShowItems">
+    <input type="hidden" name="itemId" id="hiddenDeletedOrderItemId" />
+    <input type="hidden" name="orderId" id="hiddenOrderId" value="@Model.Order.Id" />
+    <fieldset>
+        <legend>Order information</legend>
+        <h4>Order number: @Model.Order.OrderNumber</h4>
+        <h4>Customer name: @Model.Order.Customer.Name</h4>
+        <h4>Order date/time: @Model.Order.Date</h4>
+        <b>User name: @Model.Order.User.Usertype.Name.ToLower() @Model.Order.User.Name</b>
+    </fieldset>
 
-                @foreach (var item in Model.Items)
-                {
-                    var sum = (decimal)item.Amount * item.Price;
-                    <tr data-itemid="@item.Id">
-                        <td align="center"></td>
-                        <td align="center">@item.Product.BarCode</td>
-                        <td>@item.Product.Name</td>
-                        <td align="center">@item.Amount</td>
-                        <td align="center">@item.Product.Unit.Name</td>
-                        <td align="center">@item.Price</td>
-                        <td align="center">@sum</td>
-                    </tr>
-                }
-                <tr>
-                    <th colspan="6" align="right" font-weight normal>Total sum:&nbsp;</th>
-                    <th>@Model.Order.TotalSum</th>
+    <fieldset>
+        <legend>Items in order</legend>
+        <table style="width:40%" id="tableItems" class="css-serial">
+            <tr>
+                <th>#</th>
+                <th>Barcode</th>
+                <th>Product</th>
+                <th>Amount</th>
+                <th>Unit</th>
+                <th>Price, grn</th>
+                <th>Sum, grn</th>
+            </tr>
+
+            @foreach (var item in Model.Items)
+            {
+                var sum = (decimal)item.Amount * item.Price;
+                <tr data-itemid="@item.Id">
+                    <td align="center"></td>
+                    <td align="center">@item.Product.BarCode</td>
+                    <td>@item.Product.Name</td>
+                    <td align="center">@item.Amount</td>
+                    <td align="center">@item.Product.Unit.Name</td>
+                    <td align="center">@item.Price</td>
+                    <td align="center">@sum</td>
                 </tr>
-            </table>
-            <br />
-            <b> Item quantity: @Model.Items.Count </b>       
-        </fieldset>
-    </form>
+            }
+            <tr>
+                <th colspan="6" align="right" font-weight normal>Total sum:&nbsp;</th>
+                <th>@Model.Order.TotalSum</th>
+            </tr>
+        </table>
+        <br />
+        <b> Item quantity: @Model.Items.Count </b>
+    </fieldset>
+</form>
+
+
 
     <fieldset>
         <legend>Options</legend>
@@ -171,16 +176,14 @@
             <input type="hidden" name="orderId" value="@Model.Order.Id" />
             <button type="submit" class="btn">Add item</button>
         </form>
-        <form action="@Url.Action("DeleteOrderItem", "OrderItem")" method="get" target="_self">
-            <input type="hidden" name="itemId" id="hiddenDeletedOrderItemId" />
-            <input type="hidden" name="orderId" value="@Model.Order.Id" />
-            <button type="submit" onclick="" class="btn">Delete item</button>
-            @if (ViewData["ErrorMessageEmptyItem"] != null)
-            {
-                <b style="color:red">@ViewData["ErrorMessageEmptyItem"]</b>
-            }
-        </form> 
-      
+
+        <button class="btn" id="btnDelete">Delete item</button>
+        @if (ViewData["ErrorMessageEmptyItem"] != null)
+        {
+            <b style="color:red">@ViewData["ErrorMessageEmptyItem"]</b>
+        }
+
+    
         <div>
             <button id="btnChangeItem" class="btn">Change item amount</button>           
             @if (ViewData["ErrorMessageEmptyChangeAmountItem"] != null)
@@ -205,6 +208,10 @@
         </div> @*Change item amount Button*@
         <br />
         
+        <form action="@Url.Action("ShowOrders", "Order")" method="post" target="_self">
+            <input type="submit" value="Show orders" class="btn" />
+        </form>
+
         <form action="@Url.Action("Index", "Home")" method="post" target="_self">
             <input type="submit" value="Home" class="btn" />
         </form>
@@ -212,6 +219,26 @@
         <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
             <input type="submit" value="Log out" class="btn" />
         </form>
+
+        <!-- Modal content -->
+        <div id="DeleteModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Info</h3>
+                </div>
+                <div class="modal-body">
+                    <br />
+                    <h2 style="color:red;">The Item is deleted!</h2>
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <h2></h2>
+                    <h2></h2>
+                    <br />
+                </div>
+            </div>
+        </div> @*Modal window - Item is deleted!*@
+
 
         <!-- The Modal -->
         <div id="myModal" class="modal">
@@ -245,43 +272,76 @@
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script>
-        function highlight(e) {
-            if (selected[0]) selected[0].className = '';
-            e.target.parentNode.className = 'selected';
-        
-            var itemId = $("tr.selected").attr("data-itemid");
+    function highlight(e) {
+        if (selected[0]) selected[0].className = '';
+        e.target.parentNode.className = 'selected';
 
-            $("#hiddenDeletedOrderItemId").val(itemId);
-            $("#hiddenOrderItemId").val(itemId);
-        }
+        var itemId = $("tr.selected").attr("data-itemid");
 
-        var table = document.getElementById('tableItems'),
-        selected = table.getElementsByClassName('selected');
-        table.onclick = highlight;
+        $("#hiddenDeletedOrderItemId").val(itemId);
+        $("#hiddenOrderItemId").val(itemId);
+    }
 
-        // Get the modal
-        var modal = document.getElementById('myModal');
+    var table = document.getElementById('tableItems'),
+    selected = table.getElementsByClassName('selected');
+    table.onclick = highlight;
 
-        // Get the button that opens the modal
-        var btn = document.getElementById("btnChangeItem");
+    // Get the modal
+    var modal = document.getElementById('myModal');
 
-        // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
+    // Get the button that opens the modal
+    var btn = document.getElementById("btnChangeItem");
 
-        // When the user clicks the button, open the modal
-        btn.onclick = function () {
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+
+    btn.onclick = function () {
+        if ($("#hiddenOrderItemId").val()) {
             modal.style.display = "block";
         }
+        else {
+            window.location.href = "@Html.Raw(@Url.Action("ChangeOrderItemAmount", "OrderItem", new { @newAmount = 1, @selectedOrderId = @Model.Order.Id }))";
+        }
+    }
 
         // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
             modal.style.display = "none";
         }
+    }
 
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+    var modalDelete = document.getElementById('DeleteModal');
+
+    // Get the button that opens the modal
+    var btnDelete = document.getElementById("btnDelete");
+
+    // When the user clicks the button, open the modal
+    btnDelete.onclick = function () {
+        if ($("#hiddenDeletedOrderItemId").val())
+        {
+            modalDelete.style.display = "block";
+            setTimeout(function () { debugger; $("#FormShowItems").submit(); }, 1000);
         }
+        else
+        {
+            $("#FormShowItems").submit();
+        }
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modalDelete) {
+            modalDelete.style.display = "none";
+        }
+    }
+
+
 </script>

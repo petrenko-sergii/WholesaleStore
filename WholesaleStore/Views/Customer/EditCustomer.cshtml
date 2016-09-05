@@ -7,7 +7,7 @@
 <html>
 <style>
     #NewCustomerFieldSet {
-        width: 32%;
+        width: 33%;
         height: 60%;
         position: center;
         text-align: left;
@@ -89,7 +89,6 @@
                 background-color: #6495ED;
                 color: white;
             }
-
 </style>
 </html>
 
@@ -106,16 +105,72 @@
             <legend>Customer edit form</legend>
             <input type="hidden" name="customerId" value="@Model.CustomerObject.Id" /><br />
             <b>Surname/name:</b>
-            <input type="text" name="Name" size="27" id="editName" value="@Model.CustomerObject.Name" /><br />
+            @if (ViewData["ErrorMessageEmptyName"] != null)
+            {
+                <input type="text" name="Name" size="27" id="editName"/>
+                <b style="color:red">@ViewData["ErrorMessageEmptyName"]</b>
+            }
+            else
+            {
+                <input type="text" name="Name" size="27" id="editName" value="@Model.CustomerObject.Name" />                
+            }
             <br />
+            <br />
+
             &nbsp;<b>PhoneNumber:</b>
-            <input type="text" name="PhoneNumber" size="27" id="editPhoneNumber" value="@Model.CustomerObject.PhoneNumber" /><br />
-            <br />
+            @if (ViewData["ErrorMessageEmptyPhoneNumber"] != null)
+            {
+                <input type="text" name="PhoneNumber" size="27" id="editPhoneNumber">
+                <b style="color:red">@ViewData["ErrorMessageEmptyPhoneNumber"]</b>  
+                <br />
+                <br />              
+            }
+
+            else if (ViewData["ErrorMessageWrongPhone"] != null)
+            {
+                <input type="text" name="PhoneNumber" size="27" id="editPhoneNumber" value="@Model.CustomerObject.PhoneNumber" />
+                <b style="color:red">@ViewData["ErrorMessageWrongPhone"]</b>
+                <div class="relative">
+                    <p style="color:red; font-size:80%;"><strong>&nbsp;&nbsp;Phone Number Format: +380975874516 (12 digits)</strong></p>
+                </div>
+            }
+            else
+            {
+                <input type="text" name="PhoneNumber" size="27" id="editPhoneNumber" value="@Model.CustomerObject.PhoneNumber" />
+                <br />
+                <br />
+            }
+
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Email:</b>
-            <input type="text" name="Email" size="27" id="editEmail" value="@Model.CustomerObject.Email" /><br />
+            @if (ViewData["ErrorMessageEmptyEmail"] != null)
+            {
+                <input type="text" name="Email" size="27" id="editEmail"/>
+                <b style="color:red">@ViewData["ErrorMessageEmptyEmail"]</b>
+            }
+
+            else if (ViewData["ErrorMessageWrongEmail"] != null)
+            {
+                <input type="text" name="Email" size="27" id="editEmail" value="@Model.CustomerObject.Email" />
+                <b style="color:red">@ViewData["ErrorMessageWrongEmail"]</b>
+            }
+            else
+            {
+                <input type="text" name="Email" size="27" id="editEmail" value="@Model.CustomerObject.Email" />
+            }
+            
+            
+            <br />
             <br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Address:</b>
-            <input type="text" name="Address" size="45" id="editAddress" value="@Model.CustomerObject.Address" />
+            @if (ViewData["ErrorMessageEmptyAddress"] != null)
+            {
+                <input type="text" name="Address" size="45" id="editAddress"/>
+                 <b style="color:red">@ViewData["ErrorMessageEmptyAddress"]</b>
+            }
+            else
+            {
+                <input type="text" name="Address" size="45" id="editAddress" value="@Model.CustomerObject.Address" />                
+            }
         </fieldset>
     </div>
 </form>

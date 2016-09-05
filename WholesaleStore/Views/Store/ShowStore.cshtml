@@ -47,7 +47,7 @@
     <br />    
     <fieldset>
         <legend>Product store</legend>
-        <table style="width:40%" class="css-serial" id="tableProducts">
+        <table style="width:60%" class="css-serial" id="tableProducts">
             <tr>
                 <th> # </th>
                 <th>Barcode</th>
@@ -81,9 +81,12 @@
         <br />
         <b> Item quantity: @Model.Products.Count </b>
     </fieldset>
-    <a href="@Url.Action("Index", "Home")" class="btnExit">Home</a>
-    <br />
-    <a href="@Url.Action("LoginPage", "Login")" class="btnExit">Log out</a> 
+    <fieldset>
+        <legend>Options</legend>
+        <a href="@Url.Action("Index", "Home")" class="btnExit">Home</a>
+        <br />
+        <a href="@Url.Action("LoginPage", "Login")" class="btnExit">Log out</a>
+    </fieldset>
 </form>
 
 <script>

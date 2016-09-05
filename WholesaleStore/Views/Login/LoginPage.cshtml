@@ -12,7 +12,7 @@
         margin: auto;
         }
     .btnLoginForm {
-            width: 170px;
+            width: 207px;
             background-color: #6495ED; 
             border: none;
             color: white;
@@ -40,49 +40,24 @@
     <br />
     <div id="LoginFieldSet">
         <fieldset id="field" onmouseover="hideing();" onmouseout="showing();">
-            <legend>Login info </legend>
+            <legend>Login form</legend>
             <img src="~/Content/Images/Login.jpg" alt="Sample Photo" style="width:100px;height:100px;" />
             <h2>Please, log in the system</h2>
+
             <b>  Login: </b> &nbsp; &nbsp; &nbsp;&nbsp;
-            <select name="User" size="1" value="Admin">
-
-                @if (ViewData["ErrorMessageLog"] != null)
-                {
-                    <b style="color:red">@ViewData["ErrorMessageLog"]</b>
-                }
-
-                @if (Model.CurrentUserId == null || Model.CurrentUserId == 0)
-                {
-                    <option value="" style="display:none; color:grey;">Choose user</option>
-                }
-                @foreach (var user in Model.Users)
-                {
-                    if (@user.Usertype.Name == "Admin")
-                    {
-                        <option value="@user.Id">@user.Usertype.Name </option>
-                    }
-                    else
-                    {
-                        if (@user.Id == @Model.CurrentUserId)
-                        {
-                            <option value="@user.Id" selected="selected">@user.Usertype.Name &nbsp; @user.Name </option>
-                        }
-                        else
-                        {
-                            <option value="@user.Id">@user.Usertype.Name &nbsp; @user.Name </option>
-                        }
-                    }
-                }
-            </select>
-
+            <input type="text" name="user" size="25" value="@ViewBag.user" />
             @if (ViewData["ErrorMessageLog"] != null)
             {
                 <b style="color:red">@ViewData["ErrorMessageLog"]</b>
             }
+            @if (ViewData["ErrorMessageWrongLog"] != null)
+            {
+                <b style="color:red">@ViewData["ErrorMessageWrongLog"]</b>
+            }
+            <br />
+            <br />
 
-            <br />
-            <br />
-            <b> Password: <input type="password" name="Password" size="25" value="111"/></b>
+            <b> Password: <input type="password" name="password" size="25"></b>
             @if (ViewData["ErrorMessagePassword"] != null)
             {
                 <b style="color:red">@ViewData["ErrorMessagePassword"]</b>
@@ -94,7 +69,7 @@
             </div>
             <br />
             <div class="relative">
-                <a href="@Url.Action("NewUser", "Login")"><strong>Register as the new user</strong></a>
+                <a href="@Url.Action("NewUser", "User")"><strong>Register as the new user</strong></a>
             </div>             
         </fieldset>
     </div>

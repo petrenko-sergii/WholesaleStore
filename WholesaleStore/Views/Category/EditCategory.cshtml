@@ -8,7 +8,7 @@
 <html>
 <style>
     #NewCategoryFieldSet {
-        width: 18%;
+        width: 22%;
         height: 60%;
         position: center;
         text-align: left;
@@ -90,6 +90,7 @@
                 background-color: #6495ED;
                 color: white;
             }
+            
 </style>
 </html>
 
@@ -108,8 +109,16 @@
             <legend>Category edit form</legend>
             <input type="hidden" name="categoryId"  value="@Model.CategoryObject.Id" /><br />
             <b>Name:</b>
-            <input type="text" name="Name" size="20" id="editName" value="@Model.CategoryObject.Name" /><br />
-            <br />
+            @if (ViewData["ErrorMessageEmptyName"] != null)
+            {
+                <input type="text" name="Name" size="20" id="editName" />
+                <b style="color:red">@ViewData["ErrorMessageEmptyName"]</b>
+            }
+            else
+            {
+                <input type="text" name="Name" size="20" id="editName" value="@Model.CategoryObject.Name" />                
+            }
+            <br />            
         </fieldset>
     </div>
 </form>

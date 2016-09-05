@@ -43,6 +43,64 @@
             border: 1px solid black;
             border-collapse: collapse;
         }
+
+         .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                padding-top: 100px; /* Location of the box */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+                position: relative;
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                width: 33%;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 0.4s;
+                animation-name: animatetop;
+                animation-duration: 0.4s
+            }
+
+            /* The Close Button */
+            .close {
+                color: white;
+                float: right;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .modal-header {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
+
+            .modal-body {padding: 2px 16px;}
+
+            .modal-footer {
+                padding: 2px 16px;
+                background-color: #6495ED;
+                color: white;
+            }
 </style>
 
 <form>
@@ -70,10 +128,30 @@
    </fieldset>
 </form>
 
+<!-- Modal content -->
+<div id="DeleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">Close</span>
+            <h3>Info</h3>
+        </div>
+        <div class="modal-body">
+            <br />
+            <h2 style="color:red;">The Order is deleted!</h2>
+        </div>
+        <div class="modal-footer">
+            <h2></h2>
+            <h2></h2>
+            <br />
+        </div>
+    </div>
+</div> @*Modal window - Order is deleted!*@
+
 <fieldset>
     <legend>Options</legend>
     <form action="@Url.Action("CheckShowOrders", "Order")" method="get" target="_self">
-        <input type="hidden" name="orderId" id="hiddenOrderId" />        
+        <input type="hidden" name="orderId" id="hiddenOrderId" />     
+        <input type="hidden" name="orderId" id="hiddenDeletedOrderId" />   
         <input type="hidden" name="userId" value="@ViewBag.userId" />
         <button type="submit" id="btnShowOrderItems" onclick="" class="button button1">Show order</button>
         @if (ViewData["ErrorMessageEmptyShowOrder"] != null)
@@ -87,15 +165,13 @@
         <input type="hidden" name="userId" value="@ViewBag.userId" />
     </form>@*Add Button*@
 
-    <form action="@Url.Action("DeleteOrder", "Order")" method="get" target="_self">
-        <input type="hidden" name="orderId" id="hiddenDeletedOrderId" />
-        <input type="hidden" name="userId" value="@ViewBag.userId" />
-        <button type="submit" onclick="" class="button button1">Delete order</button>
+    <div>
+        <button class="button button1" id="btnDelete">Delete order</button>
         @if (ViewData["ErrorMessageEmptyOrder"] != null)
         {
             <b style="color:red">@ViewData["ErrorMessageEmptyOrder"]</b>
         }
-    </form>@*Delete Button*@
+    </div>@*Delete Button*@
 
     <br />
     <form action="@Url.Action("Index", "Home")" method="post" target="_self">
@@ -115,13 +191,35 @@
             var orderId = $("tr.selected").attr("data-orderid");
 
             $("#hiddenOrderId").val(orderId);
-            $("#hiddenDeletedOrderId").val(orderId);            
+            $("#hiddenDeletedOrderId").val(orderId);
         }
 
         var table = document.getElementById('tableOrders'),
             selected = table.getElementsByClassName('selected');
         table.onclick = highlight;
-    </script>
 
+        var modalDelete = document.getElementById('DeleteModal');
+
+    // Get the button that opens the modal
+    var btnDelete = document.getElementById("btnDelete");
+
+    // When the user clicks the button, open the modal
+    btnDelete.onclick = function () {
+        if ($("#hiddenDeletedOrderId").val()) {
+            modalDelete.style.display = "block";
+            setTimeout(function () { debugger; document.location = "@Url.Action("DeleteOrder", "Order")" + "?orderId=" + $("#hiddenDeletedOrderId").val(); }, 1000);
+
+        }
+        else {
+            debugger; document.location = "@Url.Action("DeleteOrder", "Order")";
+        }
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modalDelete) {
+            modalDelete.style.display = "none";
+        }
+    }
+</script>
 
 

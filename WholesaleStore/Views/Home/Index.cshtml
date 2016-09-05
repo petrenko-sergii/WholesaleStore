@@ -3,7 +3,7 @@
             color:red;
         }
         .button1 {
-            width: 250px;
+            width: 217px;
             background-color: #6495ED; 
             border: none;
             color: white;
@@ -15,19 +15,16 @@
             margin: 2px 2px;
             cursor: pointer;
         }
-        .button2 {
-            width: 250px;
-            background-color: #6495ED; 
-            border: none;
-            color: white;
-            padding: 4px 25px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 2px 20px;
-            cursor: pointer;
+        div.relative {
+           position: relative;
+            left: 20px;
+       }
+        fieldset {
+            border: 1px solid #ddd;
+            padding: 1 1 1 1;
+            margin: 0 0 0 0;
         }
+
     </style>
 
     @{
@@ -35,7 +32,9 @@
     }
     @model WholesaleStore.Models.HomeModel
 
-    <h3>Wholesale store</h3>
+    
+    <p2 style="font-size:160%; color:black"><strong>Wholesale store</strong></p2>
+    <br />
     <p1><b>Logged as:</b></p1>
    
     @if(@Model.LogUser.Usertype.Name == "Admin")
@@ -48,13 +47,13 @@
     }    
     <br />
     <br />
-<form >
-    <img src="~/Content/Images/WholeSale.jpg" alt="Sample Photo" style="width:480px;height:360px;" />
+<form>
+    <img src="~/Content/Images/WholeSale.jpg" alt="Sample Photo" style="width:35%;height:35%;" />
 </form>
 
 <fieldset>
         <legend>Show information</legend>
-            <form action="@Url.Action("ShowStore", "Store")" method="post" target="_self">
+    <form action="@Url.Action("ShowStore", "Store")" method="post" target="_self">
                 <button type="submit" class="button button1">Show store</button>
             </form>
             <form action="@Url.Action("ShowProducts", "Product")" method="post" target="_self">
@@ -68,7 +67,6 @@
                 <button type="submit" class="button button1">Show customers</button>
             </form>
             <form action="@Url.Action("ShowOrders", "Order")" method="post" target="_self">
-                <input type="hidden" value="@Model.LogUser.Id" name="userId" />
                 <button type="submit" class="button button1">Show orders</button>
             </form>            
             <form action="@Url.Action("ShowUnits", "Unit")" method="post" target="_self">
@@ -78,8 +76,8 @@
                 <button type="submit" class="button button1">Show users</button>
             </form>                 
     </fieldset>
-<fieldset>
 
+<fieldset>
     <legend>Add new item</legend>
     <form action="@Url.Action("AddProduct", "Product")" method="post" target="_self">
         <button type="submit" class="button button1">Add product</button>
@@ -98,11 +96,12 @@
     <form action="@Url.Action("AddUnit", "Unit")" method="post" target="_self">
         <button type="submit" class="button button1">Add unit (kg, pack)</button>
     </form>
-    <form action="@Url.Action("NewUser", "Login")" method="post" target="_self">
+    <form action="@Url.Action("NewUser", "User")" method="post" target="_self">
         <button type="submit" class="button button1">Add user</button>
     </form>
 </fieldset>
-
-<form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
-    <input type="submit" value="Log out" class="button button2" />
-</form>
+<div class="relative">
+    <form action="@Url.Action("LoginPage", "Login")" method="post" target="_self">
+        <button type="submit" class="button button1">Log out</button>
+    </form>
+</div>

@@ -306,7 +306,7 @@ namespace WholesaleStore.Controllers
                 context.ORDER_ITEM.Remove(orderItemDB);
                 context.SaveChanges();
 
-                return View("~/Views/ItemDeletedTemp.cshtml");
+                return ShowOrderItems(orderId);
             }
         }
     }

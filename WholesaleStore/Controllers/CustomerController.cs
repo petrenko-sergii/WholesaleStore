@@ -223,7 +223,7 @@ namespace WholesaleStore.Controllers
             }
             return ShowCustomers();
         }
-        public ActionResult EditCustomer(int? customerId)
+        public ActionResult FindCustomer(int? customerId)
         {
             #region ErrorMessages
             if (customerId.HasValue == false)
@@ -241,18 +241,122 @@ namespace WholesaleStore.Controllers
             using (var context = new WHOLESALE_STOREEntities())
             {
                 var customerDB = context.CUSTOMER.Find(customerId);
-                
+
                 model.CustomerObject.Id = customerDB.ID;
                 model.CustomerObject.Name = customerDB.NAME;
                 model.CustomerObject.Address = customerDB.C_ADDRESS;
                 model.CustomerObject.Email = customerDB.EMAIL;
-                model.CustomerObject.PhoneNumber = customerDB.PHONE_NUMBER;               
+                model.CustomerObject.PhoneNumber = customerDB.PHONE_NUMBER;    
 
-                return View("~/Views/Customer/EditCustomer.cshtml", model);
             }
+            return EditCustomer(model);
+        }
+        public ActionResult EditCustomer(CustomerModel model)
+        {
+            #region ErrorMessages
+            InsertError errName = TempData["errorName"] as InsertError;
+            if (errName != null)
+            {
+                ViewData["ErrorMessageEmptyName"] = errName.ErrorMessageEmptyName;
+            }
+
+            InsertError errEmptyPhone = TempData["errorEmptyPhone"] as InsertError;
+            if (errEmptyPhone != null)
+            {
+                ViewData["ErrorMessageEmptyPhoneNumber"] = errEmptyPhone.ErrorMessageEmptyPhoneNumber;
+            }
+
+            InsertError errWrongPhone = TempData["errorWrongPhone"] as InsertError;
+            if (errWrongPhone != null)
+            {
+                ViewData["ErrorMessageWrongPhone"] = errWrongPhone.ErrorMessageWrongPhone;
+            }
+
+            InsertError errEmail = TempData["errorEmail"] as InsertError;
+            if (errEmail != null)
+            {
+                ViewData["ErrorMessageEmptyEmail"] = errEmail.ErrorMessageEmptyEmail;
+            }
+
+            InsertError errWrongEmail = TempData["errorWrongEmail"] as InsertError;
+            if (errWrongEmail != null)
+            {
+                ViewData["ErrorMessageWrongEmail"] = errWrongEmail.ErrorMessageWrongEmail;
+            }
+
+            InsertError errAddress = TempData["errorAddress"] as InsertError;
+            if (errAddress != null)
+            {
+                ViewData["ErrorMessageEmptyAddress"] = errAddress.ErrorMessageEmptyAddress;
+            }
+            #endregion
+
+            return View("~/Views/Customer/EditCustomer.cshtml", model);
         }
         public ActionResult SaveEditedCustomer(int customerId, string name, string phoneNumber, string email, string address)
         {
+            var model = new CustomerModel();
+
+            #region ErrorMessages
+            if (String.IsNullOrEmpty(name))
+            {
+                InsertError errorName = new InsertError();
+                errorName.ErrorMessageEmptyName = "Enter the name!";
+                TempData["errorName"] = errorName;
+            }
+
+            if (String.IsNullOrEmpty(phoneNumber))
+            {
+                InsertError errorEmptyPhone = new InsertError();
+                errorEmptyPhone.ErrorMessageEmptyPhoneNumber = "Enter the phone number!";
+                TempData["errorEmptyPhone"] = errorEmptyPhone;
+            }
+
+            else if (Regex.Match(phoneNumber, @"^(\+[0-9]{12})$").Success == false)
+            {
+                InsertError errorWrongPhone = new InsertError();
+                errorWrongPhone.ErrorMessageWrongPhone = "Wrong phone number!";
+                TempData["errorWrongPhone"] = errorWrongPhone;
+            }
+
+            if (String.IsNullOrEmpty(email))
+            {
+                InsertError errorEmail = new InsertError();
+                errorEmail.ErrorMessageEmptyEmail = "Enter Email!";
+                TempData["errorEmail"] = errorEmail;
+            }
+
+            else if (new EmailAddressAttribute().IsValid(email) == false)
+            {
+                InsertError errorWrongEmail = new InsertError();
+                errorWrongEmail.ErrorMessageWrongEmail = "Wrong Email!";
+                TempData["errorWrongEmail"] = errorWrongEmail;
+            }
+
+            if (String.IsNullOrEmpty(address))
+            {
+                InsertError errorAddress = new InsertError();
+                errorAddress.ErrorMessageEmptyAddress = "Enter the address!";
+                TempData["errorAddress"] = errorAddress;
+            }
+            #endregion
+
+            if (TempData["errorName"] != null ||
+                TempData["errorEmptyPhone"] != null ||
+                TempData["errorWrongPhone"] != null ||
+                TempData["errorEmail"] != null ||
+                TempData["errorAddress"] != null ||
+                TempData["errorWrongEmail"] != null)
+            {
+                model.CustomerObject.Id = customerId;
+                model.CustomerObject.Name = name;
+                model.CustomerObject.PhoneNumber = phoneNumber;
+                model.CustomerObject.Email = email;
+                model.CustomerObject.Address = address;
+
+                return EditCustomer(model);
+            }
+
             using (var context = new WHOLESALE_STOREEntities())
             {
                 var customerDB = context.CUSTOMER.Find(customerId);
