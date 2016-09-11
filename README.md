@@ -1,5 +1,5 @@
 # WholesaleStore
 
-Web App "WholesaleStore" helps to create, edit, store the information of the big food wholestore. 
-It helps to make the ptoducts, categories, orders, customers.
-App is created using C# MVC method.
+To check the site press: http://wholesalestore.azurewebsites.net
+Web App "WholesaleStore" allows to create, edit, delete the information for the food wholesale store. In this App you can work with products, categories, customers, orders. For example, if you make the order and save it, the product amount will be reduced from the total store product amount and vice-versa. This App is created using  ASP.NET MVC 4 Web Application.
+
